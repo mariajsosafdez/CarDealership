@@ -1,37 +1,45 @@
 package modelo.vehiculo;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+
+
+//protected a los que pueden cambiar(deje placa por el metodo que estaba en el setplaca) y private final a los atributos que se asignan una única vez
 
 public abstract class Vehiculo {
 
-	
 	protected static final String LETRAS ="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //Usamos esto para manejar la codificacion de las placas
 	protected static final String NUMEROS = "0123456789"; // "		"
 	
+	protected static ArrayList<String> placasRegistradas = new ArrayList<>(); //Lista de placas para buscar no repetidas
+	
 	protected String placa;
-	protected String marca;
-	protected String modelo;
-	protected String year;
-	protected float precio;
-	protected String tipoDeCombustible;
-	protected String transmision;
+	private final String marca;
+	private final String modelo;
+	private final int year; //int para recibir unicamente el año numérico sin letras
+	private float precio; //las clases no acceden directamente, obliga a utilizarlas a travez del setter
+	protected static final float IVA = 0.19f;
+	private final String tipoDeCombustible;
+	private final String transmision;
 	protected float kilometraje;
 	protected String color;
 	protected String estado;
-	protected float cilindraje;
+	private final float cilindraje;
 	protected boolean disponible;
 	
 	
-	public Vehiculo(String placa, String marca, String modelo, String year, float precio, String tipoDeCombustible,
+	public Vehiculo(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
 			String transmision, float kilometraje,  String color, String estado, float cilindraje, boolean disponible) {
 		super();
-		this.placa = placa;
-		this.marca = marca;
-		this.modelo = modelo;
-		this.year = year;
-		this.precio = precio;
+		
+		setPlaca(placa);
+		this.marca = validarMarca(marca);
+	    this.modelo = validarModelo(modelo);
+		this.year = validarYear(year); 
+		setPrecio(precio);//hasta aquí tienen sus excepciones
+		
 		this.tipoDeCombustible = tipoDeCombustible;
 		this.transmision = transmision;
-		this.kilometraje = 0;
+		this.kilometraje = kilometraje;
 		this.color = color;
 		this.estado = estado;
 		this.cilindraje = cilindraje;
@@ -54,12 +62,17 @@ public abstract class Vehiculo {
 	}
 
 
-	public String getYear() {
+	public int getYear() {
 		return year;
+	}
+	
+	
+	protected float getPrecio() {  //Devuelve el valor ya con IVA calculado
+		return precio * (1 + IVA);
 	}
 
 
-	public float getPrecio() {
+	public float getPrecioBase() { //Devuelve el valor original sin el IVA
 		return precio;
 	}
 
@@ -111,12 +124,89 @@ public abstract class Vehiculo {
 		return fuente.charAt(ThreadLocalRandom.current().nextInt(fuente.length())); 
 	}
 	
-
-
+	
 	public abstract void setPlaca(String placa); // Hacemos el metodo abstracto para que los hijos tengan que implementar su forma de cambiar placa
 
+	
+	protected void registrarPlaca(String placa) {
+	    if (placa == null || placa.trim().isEmpty()) //.trim() quita espacios o tabs al inicio y al final del String, no afecta espacio entre palabras
+	    	throw new IllegalArgumentException("La placa no puede ser nula o vacía");
 
+	    if (placasRegistradas.contains(placa)) 
+	    	throw new IllegalArgumentException("La placa ya está registrada");
+	    
+	    placasRegistradas.add(placa);
+	}
+	
+	
+	private String validarMarca(String marca) {
+		if (marca == null) {
+	        throw new IllegalArgumentException("La marca no puede ser null");
+	    }
+	    if (marca.trim().isEmpty()) {
+	        throw new IllegalArgumentException("La marca no puede estar vacía");
+	    }
+	    if (!marca.matches("[a-zA-Z ]+")) {
+	        throw new IllegalArgumentException("La marca solo puede contener letras");
+	    }
+	    if (marca.length() < 2 || marca.length() > 20) {
+	        throw new IllegalArgumentException("La marca debe estar en un rango válido entre 2 y 20 caracteres");
+	    }
+	    return marca;
+	}
+	
+	private String validarModelo(String modelo) {
+		if (modelo == null) {
+	        throw new IllegalArgumentException("El modelo no puede ser null");
+	    }
+	    if (modelo.trim().isEmpty()) {
+	        throw new IllegalArgumentException("El modelo no puede estar vacío");
+	    }
+	    if (!modelo.matches("[a-zA-Z0-9\\- ]+")) {
+	        throw new IllegalArgumentException("El modelo contiene caracteres inválidos");
+	    }
+	    if (modelo.length() < 1 || modelo.length() > 50) {
+	        throw new IllegalArgumentException("El modelo debe tener máximo 50 caracteres");
+	    }
+	    return modelo;
+	}
+	
+	
+	private int validarYear(int year) {
+		if (year < 1000 || year > 9999) {
+		    throw new IllegalArgumentException("El año debe tener exactamente 4 dígitos");
+		}
+		if (year < 1886) {
+	        throw new IllegalArgumentException("El año no puede ser menor al año del primer vehículo registrado (1886)"); //si se va a admitir cualquier vehículo
+	    }
+		
+		/*if (year < 2025) {
+	        throw new IllegalArgumentException("El año no puede ser menor al año 2025"); //si se va a admitir solo vehículos nuevos
+	    }*/
+
+	    if (year > 2027) {
+	        throw new IllegalArgumentException("El año no puede ser mayor al año del último modelo actual (2027)");
+	    }
+
+	    return year;
+	}
+	
+	
 	public void setPrecio(float precio) {
+		if (precio <= 0) {
+		    throw new IllegalArgumentException("El precio debe ser mayor que 0");
+		}
+		if (Float.isNaN(precio)) {
+		    throw new IllegalArgumentException("El precio no puede ser indeterminado");
+		}
+
+		if (Float.isInfinite(precio)) {
+		    throw new IllegalArgumentException("El precio no puede ser infinito");
+		}
+
+		if (precio > 5_000_000_000f) {
+		    throw new IllegalArgumentException("El precio es excesivamente alto");
+		}
 		this.precio = precio;
 	}
 
