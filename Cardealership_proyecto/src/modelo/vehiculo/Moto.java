@@ -5,7 +5,7 @@ public class Moto extends Vehiculo{
 	private String categoria;
 
 	public Moto(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
-			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible, String categoria) {
+			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible, String categoria) throws Exception {
 		super(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color, estado, cilindraje,
 				disponible);
 		this.categoria = categoria;
@@ -19,7 +19,7 @@ public class Moto extends Vehiculo{
 	
 
 	@Override
-	public void setPlaca(String placa) {
+	public void setPlaca(String placa) throws Exception{
 		if(placa == null || placa.isEmpty()) {
 			do { 
 				char[] buffer = new char[6];
@@ -46,11 +46,12 @@ public class Moto extends Vehiculo{
 	@Override
 	public String toString() {
 		return "Moto [categoria=" + categoria + ",	Placa()=" + getPlaca() + ", Marca()=" + getMarca()
-				+ ", Modelo()=" + getModelo() + ", Year()=" + getYear() + ", Precio()=" + getPrecioBase()
+				+ ", Modelo()=" + getModelo() + ", Year()=" + getYear() + ", Precio()=" + getPrecio()
 				+ ", TipoDeCombustible()=" + getTipoDeCombustible() + ", Transmision()=" + getTransmision()
 				+ ", Kilometraje()=" + getKilometraje() + ", Color()=" + getColor() + ", Estado()="
 				+ getEstado() + ", Cilindraje()=" + getCilindraje() + ", Disponible()=" + isDisponible() + "]";
 	}
+	
 	
 	
 

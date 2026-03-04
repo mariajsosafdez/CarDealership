@@ -7,7 +7,8 @@ public class Auto extends Vehiculo {
 	
 	
 	public Auto(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
-			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible,String carroceria, int numeroPuertas) {
+			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible,
+			String carroceria, int numeroPuertas) throws Exception {
 		super(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color, estado, cilindraje,
 				disponible);
 		
@@ -21,7 +22,7 @@ public class Auto extends Vehiculo {
 	public String toString() {
 		return "Auto [numeroPuertas=" + numeroPuertas + ", carroceria=" + carroceria + ", Placa()=" + getPlaca()
 				+ ", Marca()=" + getMarca() + ", Modelo()=" + getModelo() + ", Year()=" + getYear()
-				+ ", Precio()=" + getPrecioBase() + ", TipoDeCombustible()=" + getTipoDeCombustible()
+				+ ", Precio()=" + getPrecio() + ", TipoDeCombustible()=" + getTipoDeCombustible()
 				+ ", Transmision()=" + getTransmision() + ", Kilometraje()=" + getKilometraje() + ", Color()="
 				+ getColor() + ",	()=" + getEstado() + ", Cilindraje()=" + getCilindraje()
 				+ ", isDisponible()=" + isDisponible() + "]";
@@ -39,7 +40,7 @@ public class Auto extends Vehiculo {
 
 
 	@Override
-	public void setPlaca(String placa) {
+	public void setPlaca(String placa) throws Exception {
 		if(placa == null || placa.trim().isEmpty()) {
 			do {
 				char[] buffer = new char[6];					
