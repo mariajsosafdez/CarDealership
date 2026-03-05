@@ -12,7 +12,7 @@ public class Auto extends Vehiculo {
 		super(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color, estado, cilindraje,
 				disponible);
 		
-		this.carroceria = carroceria;
+		this.carroceria = carroceria;	//Falta excepcion de carroceria no puede ser nula, y numero de puertas no puede ser 0
 		this.numeroPuertas = numeroPuertas;
 		
 	}
@@ -40,7 +40,7 @@ public class Auto extends Vehiculo {
 
 
 	@Override
-	public void setPlaca(String placa) throws Exception {
+	public void setPlaca(String placa)  {
 		if(placa == null || placa.trim().isEmpty()) {
 			do {
 				char[] buffer = new char[6];					
@@ -53,6 +53,10 @@ public class Auto extends Vehiculo {
 		
 		if (!placa.matches("[A-Z]{3}\\d{3}")) {
 	        throw new IllegalArgumentException("Formato inválido para Auto");
+		}
+		
+		if(placasRegistradas.contains(placa) && !placa.equals(this.placa)) { //Esta Excepcion es para si el Usuario Ingresa la placa manual
+			throw new  IllegalArgumentException("La placa: "+ placa + "ya esta registrada");
 		}
 		
 		registrarPlaca(placa);

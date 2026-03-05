@@ -8,7 +8,7 @@ public class Moto extends Vehiculo{
 			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible, String categoria) throws Exception {
 		super(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color, estado, cilindraje,
 				disponible);
-		this.categoria = categoria;
+		this.categoria = categoria; //Excepcion categoria no nula
 	}
 
 	
@@ -19,7 +19,7 @@ public class Moto extends Vehiculo{
 	
 
 	@Override
-	public void setPlaca(String placa) throws Exception{
+	public void setPlaca(String placa) {
 		if(placa == null || placa.isEmpty()) {
 			do { 
 				char[] buffer = new char[6];
@@ -30,13 +30,18 @@ public class Moto extends Vehiculo{
 					buffer[4] = getRandom(NUMEROS);
 					buffer[5] = getRandom(LETRAS);
 			
-				placa = new String(buffer); //Faltaba asignar la placa al objeto
-			} while (placasRegistradas.contains(placa)); //Asigna placas aleatorias hasta que no esté repetida
+				placa = new String(buffer); 	//Faltaba asignar la placa al objeto
+			} while (placasRegistradas.contains(placa)); 	//Asigna placas aleatorias hasta que no esté repetida
 		}
 		
 		if (!placa.matches("[A-Z]{3}\\d{2}[A-Z]")) {
 	        throw new IllegalArgumentException("Formato inválido para Moto");
 	    }
+		
+		if(placasRegistradas.contains(placa) && !placa.equals(this.placa)) { //Esta Excepcion es para si el Usuario Ingresa la placa manual
+			throw new  IllegalArgumentException("La placa: "+ placa + "ya esta registrada");
+		}
+		
 		
 		registrarPlaca(placa);
 		this.placa = placa;
