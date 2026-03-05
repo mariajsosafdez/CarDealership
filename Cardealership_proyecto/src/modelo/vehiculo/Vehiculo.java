@@ -1,9 +1,6 @@
 package modelo.vehiculo;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
-import java.lang.*;
-
-
 
 public abstract class Vehiculo {
 
@@ -12,18 +9,18 @@ public abstract class Vehiculo {
 	
 	protected static ArrayList<String> placasRegistradas = new ArrayList<>(); //Lista de placas para buscar no repetidas // static hace que no se cree una lista vacia para cada vez que instanciamos un auto si no que sea la misma lista
 	
-	protected String placa;
-	protected String marca;
-	protected String modelo;
+	protected String placa; //
+	protected String marca; //
+	protected String modelo; //
 	protected String year;  //Juan Jose: Es mejor ponerlo String No necesitamos hacer operaciones con el año (hacer Excepcion) ya la hago.
-	protected float precio; 
-	protected String tipoDeCombustible;
-	protected String transmision;
-	protected float kilometraje;
-	protected String color;
-	protected String estado;
-	protected float cilindraje;
-	protected boolean disponible;
+	protected float precio; //
+	protected String tipoDeCombustible; //
+	protected String transmision; //
+	protected float kilometraje; //
+	protected String color; //
+	protected String estado; //
+	protected float cilindraje; //
+	protected boolean disponible; //
 	
 	
 	public Vehiculo(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
@@ -34,7 +31,7 @@ public abstract class Vehiculo {
 		
 		if(marca == null||marca.trim().isEmpty()) throw new IllegalArgumentException("Error: La marca no puede ser nula o estar vacia");	// IllegalArgumentException cierra el la creacion del objeto inmediatamente una validacion no se cumple
 		
-		if(modelo == null || modelo.trim().isEmpty()) throw new IllegalArgumentException("Error: La marca no puede ser nula ni estar vacia");
+		if(modelo == null || modelo.trim().isEmpty()) throw new IllegalArgumentException("Error: El modelo no puede ser nulo ni estar vacío");
 		
 		if(year < 2015 || year > 2027) throw new IllegalArgumentException("Error el año del vehiculo debe ser mayor al 2015 y menor al 2027");
 		
@@ -42,14 +39,17 @@ public abstract class Vehiculo {
 		
 		if(kilometraje < 0 ) throw new IllegalArgumentException("El kilometraje no puede ser negativo");
 		
+		if(color == null || color.trim().isEmpty()) throw new IllegalArgumentException("Error: El color no puede ser nulo ni estar vacío");
+		
 		this.tipoDeCombustible = validarCombustible(tipoDeCombustible);
 		
 		this.transmision = validarTransmision(transmision); 	
 		
 		if(cilindraje < 50) throw new IllegalArgumentException("Cilindraje minimo 50cc");
 		
+		this.estado = validarEstado(estado); //Validar estado nuevo o usado
 		
-		//Faltaria hacer el metodode IsDisponible
+		//Faltaria hacer el metodo de IsDisponible
 		// Despues de que pase todas las validaciones asignamos los valores a las variables es mejor manejar las validaciones asi para que si algo pasa instanciando el objeto no se instancie.
 		//Psdt:Vale no hay problema que manejes IllegalArgumentException sin Throws, ya consulte y de hecho es mas eficiente usarlo sin el Throws 
 		
@@ -59,7 +59,6 @@ public abstract class Vehiculo {
 		this.precio = precio;
 		this.kilometraje = kilometraje;
 		this.color = color;
-		this.estado = estado;
 		this.cilindraje = cilindraje;
 		this.disponible = disponible;
 	}
@@ -120,7 +119,7 @@ public abstract class Vehiculo {
 	}
 
 
-	public boolean isDisponible() {
+	public boolean isDisponible() { //Valentina: este ya es el metodo isDisponible, no hay que crear nada nuevo
 		return disponible;
 	}
 	
@@ -142,7 +141,7 @@ public abstract class Vehiculo {
 
 	
 	public void registrarPlaca(String placa)  {
-	    if (placa == null) 														//.trim() quita espacios o tabs al inicio y al final del String, no afecta espacio entre palabras devuelve el string limpio
+	    if (placa == null) 										//.trim() quita espacios o tabs al inicio y al final del String, no afecta espacio entre palabras devuelve el string limpio
 	    	throw new IllegalArgumentException("La placa no puede ser nula");
 	    
 	    if (placa.trim().isEmpty()) {
@@ -156,25 +155,26 @@ public abstract class Vehiculo {
 	}
 	
 	
-	
-	
 	private String validarCombustible(String combustible) {
         if (combustible == null) throw new IllegalArgumentException("El combustible no puede ser nulo.");
-        switch (combustible) {
-            case "Gasolina Corriente":
-            case "Gasolina Extra":
-            case "Diesel":
-            case "Electrico":
-            case "Gas Natural":
+        
+        String limpio = combustible.trim().toUpperCase()
+	            .replace("Á", "A").replace("É", "E").replace("Í", "I") 
+	            .replace("Ó", "O").replace("Ú", "U");
+        
+        switch (limpio) {
+            case "GASOLINA CORRIENTE":
+            case "GASOLINA EXTRA":
+            case "DIESEL":
+            case "ELECTRICO":
+            case "GAS NATURAL":
                 return combustible;
             default:
                 throw new IllegalArgumentException("Combustible no válido: " + combustible);
         }
     }
 	
-	
-	
-				// Estos metodos se usan dentro del super en la clase padre, por lo tanto nos beneficia dejarlos private puesto que no necesitamos que los hijos accedan
+		// Estos metodos se usan dentro del super en la clase padre, por lo tanto nos beneficia dejarlos private puesto que no necesitamos que los hijos accedan
 	
 	
 	private String validarTransmision(String transmision) {
@@ -200,22 +200,34 @@ public abstract class Vehiculo {
 	                ". Opciones: Manual, Automática, CVT, Doble Embrague, Manual Automatizada, Secuencial o Electrónica Variable.");
 	    }
 	}
-
-
+	
+	private String validarEstado(String estado) {
+	    if (estado == null || estado.trim().isEmpty()) {
+	        throw new IllegalArgumentException("El estado no puede ser nulo");
+	    }
+	 
+	    String limpio = estado.trim().toUpperCase()
+	            .replace("Á", "A").replace("É", "E").replace("Í", "I") 
+	            .replace("Ó", "O").replace("Ú", "U");
+	    
+	    if (limpio.equals("NUEVO") || limpio.equals("USADO")) {
+	        return limpio;
+	    } else {
+	        throw new IllegalArgumentException("Estado inválido. Use: 'Nuevo' o 'Usado'");
+	    }
+	}
+	
 	
 	
 	public void setKilometraje(float kilometraje) {
 		this.kilometraje = kilometraje;
 	}
 
-
 	
 	
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
-
-
 	
 	
 	
@@ -224,5 +236,4 @@ public abstract class Vehiculo {
 	}
 	
 	
-
 }

@@ -42,7 +42,6 @@ public class Moto extends Vehiculo{
 			throw new  IllegalArgumentException("La placa: "+ placa + "ya esta registrada");
 		}
 		
-		
 		registrarPlaca(placa);
 		this.placa = placa;
 	}
