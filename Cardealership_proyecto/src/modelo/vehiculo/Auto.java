@@ -1,5 +1,10 @@
 package modelo.vehiculo;
 
+import modelo.vehiculo.excepciones.EObjectExiste;
+import modelo.vehiculo.excepciones.EObjectInvalido;
+import modelo.vehiculo.excepciones.EObjectNull;
+import modelo.vehiculo.excepciones.EObjectVoid;
+
 public class Auto extends Vehiculo {
 
 	private int numeroPuertas;
@@ -40,27 +45,33 @@ public class Auto extends Vehiculo {
 
 
 	@Override
-	public void setPlaca(String placa)  {
-		if(placa == null || placa.trim().isEmpty()) {
-			do {
-				char[] buffer = new char[6];					
-				for(int i = 0; i < 3; i++) buffer[i] = getRandom(LETRAS);
-				for(int i = 3; i < 6; i++) buffer[i] = getRandom(NUMEROS);
-				
-				placa = new String(buffer);
-			} while (placasRegistradas.contains(placa));//Asigna placas aleatorias hasta que no esté repetida
-		} 
-		
-		if (!placa.matches("[A-Z]{3}\\d{3}")) {
-	        throw new IllegalArgumentException("Formato inválido para Auto");
-		}
-		
-		if(placasRegistradas.contains(placa) && !placa.equals(this.placa)) { //Esta Excepcion es para si el Usuario Ingresa la placa manual
-			throw new  IllegalArgumentException("La placa: "+ placa + "ya esta registrada");
-		}
-		
-		registrarPlaca(placa);
-		this.placa = placa;
+	public void setPlaca(String placa)  throws EObjectInvalido,EObjectNull,EObjectExiste, EObjectVoid {
+	    // 1. Generación aleatoria
+	    if (placa == null || placa.trim().isEmpty()) {
+	        do {
+	            char[] buffer = new char[6];
+	            for (int i = 0; i < 3; i++) buffer[i] = getRandom(LETRAS);
+	            for (int i = 3; i < 6; i++) buffer[i] = getRandom(NUMEROS);
+	            placa = new String(buffer);
+	        } while (existePlaca(placa));
+	    }
+
+	    // 2. Validación de formato
+	    if (!placa.matches("[A-Z]{3}\\d{3}")) {
+	        throw new EObjectInvalido("Formato inválido para Auto");
+	    }
+
+	    // 3. Lógica de registro UNIFICADA
+	    if (!placa.equals(this.placa)) {
+	        if (existePlaca(placa)) {
+	            throw new EObjectExiste("La placa: " + placa + " ya está registrada");
+	        }
+	        
+	        // ESTO ES LO QUE CAMBIA: Solo registramos si es diferente
+	        registrarPlaca(placa);
+	        this.placa = placa;
+	    }
+	    // Si son iguales, el método termina aquí sin hacer nada, lo cual es correcto.
 	}
 	
 

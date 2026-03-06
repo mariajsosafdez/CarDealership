@@ -1,5 +1,9 @@
 package modelo.vehiculo;
 
+import modelo.vehiculo.excepciones.*;
+
+
+
 public class Moto extends Vehiculo{
 	
 	private String categoria;
@@ -19,31 +23,38 @@ public class Moto extends Vehiculo{
 	
 
 	@Override
-	public void setPlaca(String placa) {
-		if(placa == null || placa.isEmpty()) {
-			do { 
-				char[] buffer = new char[6];
-			
-				for(int i = 0; i < 3; i++) 
-					buffer[i] = getRandom(LETRAS);
-					buffer[3] = getRandom(NUMEROS);
-					buffer[4] = getRandom(NUMEROS);
-					buffer[5] = getRandom(LETRAS);
-			
-				placa = new String(buffer); 	//Faltaba asignar la placa al objeto
-			} while (placasRegistradas.contains(placa)); 	//Asigna placas aleatorias hasta que no esté repetida
-		}
-		
-		if (!placa.matches("[A-Z]{3}\\d{2}[A-Z]")) {
-	        throw new IllegalArgumentException("Formato inválido para Moto");
+	public void setPlaca(String placa) throws EObjectInvalido, EObjectNull, EObjectExiste, EObjectVoid{
+	    // 1. Si mandan null o vacío, generamos una automática
+	    if (placa == null || placa.trim().isEmpty()) {
+	        do { 
+	            char[] buffer = new char[6];
+	            for (int i = 0; i < 3; i++) buffer[i] = getRandom(LETRAS);
+	            buffer[3] = getRandom(NUMEROS);
+	            buffer[4] = getRandom(NUMEROS);
+	            buffer[5] = getRandom(LETRAS);
+	            placa = new String(buffer);     
+	        } while (existePlaca(placa));   
 	    }
-		
-		if(placasRegistradas.contains(placa) && !placa.equals(this.placa)) { //Esta Excepcion es para si el Usuario Ingresa la placa manual
-			throw new  IllegalArgumentException("La placa: "+ placa + "ya esta registrada");
-		}
-		
-		registrarPlaca(placa);
-		this.placa = placa;
+	    
+	    // 2. Validamos el formato de Moto (AAA11A)
+	    if (!placa.matches("[A-Z]{3}\\d{2}[A-Z]")) {
+	        throw new EObjectInvalido("Formato inválido para Moto");
+	    }
+
+	    // 3. LA LÓGICA UNIFICADA:
+	    // ¿Es una placa distinta a la que ya tengo? (Esto cubre el caso inicial porque null != "AAA11A")
+	    if (!placa.equals(this.placa)) {
+	        
+	        // ¿Esa placa ya la tiene alguien más en el sistema?
+	        if (existePlaca(placa)) {
+	            throw new EObjectExiste("La placa: " + placa + " ya está registrada");
+	        }
+	        
+	        // Si llegamos aquí, es una placa nueva o un cambio válido
+	        registrarPlaca(placa); // Se agrega al String[]
+	        this.placa = placa;    // Se guarda en el objeto
+	    }
+	    // Si placa == this.placa, el método no hace nada y termina felizmente.
 	}
 
 

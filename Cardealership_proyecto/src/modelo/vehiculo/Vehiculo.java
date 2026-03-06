@@ -1,13 +1,14 @@
 package modelo.vehiculo;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.ArrayList;
+import java.util.Arrays;
+import modelo.vehiculo.excepciones.*;
 
 public abstract class Vehiculo {
 
 	protected static final String LETRAS ="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //Usamos esto para manejar la codificacion de las placas
 	protected static final String NUMEROS = "0123456789"; // "		"
 	
-	protected static ArrayList<String> placasRegistradas = new ArrayList<>(); //Lista de placas para buscar no repetidas // static hace que no se cree una lista vacia para cada vez que instanciamos un auto si no que sea la misma lista
+	protected static String[] placasRegistradas = new String[0]; // static hace que no se cree una lista vacia para cada vez que instanciamos un auto si no que sea la misma lista
 	
 	protected String placa; //
 	protected String marca; //
@@ -26,32 +27,6 @@ public abstract class Vehiculo {
 	public Vehiculo(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
 			String transmision, float kilometraje,  String color, String estado, float cilindraje, boolean disponible)  {
 		super();
-		
-		setPlaca(placa);																						
-		
-		if(marca == null||marca.trim().isEmpty()) throw new IllegalArgumentException("Error: La marca no puede ser nula o estar vacia");	// IllegalArgumentException cierra el la creacion del objeto inmediatamente una validacion no se cumple
-		
-		if(modelo == null || modelo.trim().isEmpty()) throw new IllegalArgumentException("Error: El modelo no puede ser nulo ni estar vacío");
-		
-		if(year < 2015 || year > 2027) throw new IllegalArgumentException("Error el año del vehiculo debe ser mayor al 2015 y menor al 2027");
-		
-		if(precio <= 0) throw new IllegalArgumentException("El precio no puede ser 0");
-		
-		if(kilometraje < 0 ) throw new IllegalArgumentException("El kilometraje no puede ser negativo");
-		
-		if(color == null || color.trim().isEmpty()) throw new IllegalArgumentException("Error: El color no puede ser nulo ni estar vacío");
-		
-		this.tipoDeCombustible = validarCombustible(tipoDeCombustible);
-		
-		this.transmision = validarTransmision(transmision); 	
-		
-		if(cilindraje < 50) throw new IllegalArgumentException("Cilindraje minimo 50cc");
-		
-		this.estado = validarEstado(estado); //Validar estado nuevo o usado
-		
-		//Faltaria hacer el metodo de IsDisponible
-		// Despues de que pase todas las validaciones asignamos los valores a las variables es mejor manejar las validaciones asi para que si algo pasa instanciando el objeto no se instancie.
-		//Psdt:Vale no hay problema que manejes IllegalArgumentException sin Throws, ya consulte y de hecho es mas eficiente usarlo sin el Throws 
 		
 		this.marca = marca;
 		this.modelo = modelo;
@@ -119,7 +94,7 @@ public abstract class Vehiculo {
 	}
 
 
-	public boolean isDisponible() { //Valentina: este ya es el metodo isDisponible, no hay que crear nada nuevo
+	public boolean isDisponible() { 
 		return disponible;
 	}
 	
@@ -137,26 +112,48 @@ public abstract class Vehiculo {
 	}
 	
 	
-	public abstract void setPlaca(String placa); // Hacemos el metodo abstracto para que los hijos tengan que implementar su forma de cambiar placa
+	public abstract void setPlaca(String placa) throws EObjectInvalido,EObjectNull,EObjectExiste, EObjectVoid; // Hacemos el metodo abstracto para que los hijos tengan que implementar su forma de cambiar placa
+	
+	
+	protected boolean existePlaca(String placa) {
+	    int i = 0;
+	    while (i < placasRegistradas.length) {
+	        if (placasRegistradas[i] != null && placasRegistradas[i].equals(placa)) {
+	            return true; // Se encontró la placa
+	        }
+	        i++;
+	    }
+	    return false; // No se encontro
+	}
 
 	
-	public void registrarPlaca(String placa)  {
+	public void registrarPlaca(String placa)  throws EObjectNull, EObjectVoid, EObjectExiste{ 
 	    if (placa == null) 										//.trim() quita espacios o tabs al inicio y al final del String, no afecta espacio entre palabras devuelve el string limpio
-	    	throw new IllegalArgumentException("La placa no puede ser nula");
+	    	throw new EObjectNull("La placa no puede ser nula");
 	    
 	    if (placa.trim().isEmpty()) {
-	    	throw new IllegalArgumentException("La placa no puede estar vacía");
+	    	throw new EObjectVoid("La placa no puede estar vacía");
 	    }
 	    
-	    if (placasRegistradas.contains(placa)) 
-	    	throw new IllegalArgumentException("La placa ya está registrada");
-	    
-	    placasRegistradas.add(placa);
+	    int i = 0;
+	   while( i < placasRegistradas.length) {
+		   if(placasRegistradas[i].equalsIgnoreCase(placa)) {
+			   throw new EObjectExiste("La placa ya esta registrada");
+			   
+		   }
+		  
+		   i++;
+	   }
+	   
+	   placasRegistradas  = Arrays.copyOf(placasRegistradas, placasRegistradas.length + 1);
+	   placasRegistradas[placasRegistradas.length-1] = placa;
+	   
+	   
 	}
 	
 	
-	private String validarCombustible(String combustible) {
-        if (combustible == null) throw new IllegalArgumentException("El combustible no puede ser nulo.");
+	public String validarCombustible(String combustible) throws EObjectNull, EObjectInvalido {
+        if (combustible == null) throw new EObjectNull("El combustible no puede ser nulo.");
         
         String limpio = combustible.trim().toUpperCase()
 	            .replace("Á", "A").replace("É", "E").replace("Í", "I") 
@@ -170,15 +167,15 @@ public abstract class Vehiculo {
             case "GAS NATURAL":
                 return combustible;
             default:
-                throw new IllegalArgumentException("Combustible no válido: " + combustible);
+                throw new  EObjectInvalido("Combustible no válido: " + combustible);
         }
     }
 	
-		// Estos metodos se usan dentro del super en la clase padre, por lo tanto nos beneficia dejarlos private puesto que no necesitamos que los hijos accedan
+		// Como estos metodos los vamos a usar desde la clase concesionario deben ser public
 	
 	
-	private String validarTransmision(String transmision) {
-	    if (transmision == null) throw new IllegalArgumentException("La transmisión no puede ser nula.");
+	public String validarTransmision(String transmision)throws EObjectNull, EObjectInvalido {
+	    if (transmision == null) throw new EObjectNull("La transmisión no puede ser nula.");
 
 	    
 	    String limpio = transmision.trim().toUpperCase()
@@ -196,14 +193,14 @@ public abstract class Vehiculo {
 	        case "ELECTRONICA VARIABLE": 
 	            return limpio; 
 	        default:
-	            throw new IllegalArgumentException("Transmisión inválida: " + transmision + 
+	            throw new EObjectInvalido("Transmisión inválida: " + transmision + 
 	                ". Opciones: Manual, Automática, CVT, Doble Embrague, Manual Automatizada, Secuencial o Electrónica Variable.");
 	    }
 	}
 	
-	private String validarEstado(String estado) {
+	public String validarEstado(String estado) throws EObjectNull, EObjectInvalido{
 	    if (estado == null || estado.trim().isEmpty()) {
-	        throw new IllegalArgumentException("El estado no puede ser nulo");
+	        throw new EObjectNull("El estado no puede ser nulo");
 	    }
 	 
 	    String limpio = estado.trim().toUpperCase()
@@ -213,7 +210,7 @@ public abstract class Vehiculo {
 	    if (limpio.equals("NUEVO") || limpio.equals("USADO")) {
 	        return limpio;
 	    } else {
-	        throw new IllegalArgumentException("Estado inválido. Use: 'Nuevo' o 'Usado'");
+	        throw new EObjectInvalido("Estado inválido. Use: 'Nuevo' o 'Usado'");
 	    }
 	}
 	
