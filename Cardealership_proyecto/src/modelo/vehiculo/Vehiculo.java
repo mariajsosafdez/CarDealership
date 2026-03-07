@@ -28,6 +28,7 @@ public abstract class Vehiculo {
 			String transmision, float kilometraje,  String color, String estado, float cilindraje, boolean disponible)  {
 		super();
 		
+		this.placa = placa;
 		this.marca = marca;
 		this.modelo = modelo;
 		this.year = String.valueOf(year);
@@ -36,6 +37,9 @@ public abstract class Vehiculo {
 		this.color = color;
 		this.cilindraje = cilindraje;
 		this.disponible = disponible;
+		this.tipoDeCombustible = tipoDeCombustible;
+		this.transmision = transmision;
+		this.estado = estado;
 	}
 
 
