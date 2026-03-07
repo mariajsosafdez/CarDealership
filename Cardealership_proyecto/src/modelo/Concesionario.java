@@ -30,6 +30,12 @@ public class Concesionario {
 		this.nombre = nombre;
 	}
 
+	public Cliente[] listarClientes() {
+		return clientes;
+	}
+	public Empleado[] listarEmpleados() {
+		return empleados;
+	}
 	// No hacer getter y setters de los arrays, esos llevan otros nombres
 	// especificados en el diagrama, además de funcionalidades extra
 
