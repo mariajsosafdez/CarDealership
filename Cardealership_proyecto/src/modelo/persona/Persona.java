@@ -7,7 +7,7 @@ public abstract class Persona {
     protected String nombre;
     protected String apellido;
     protected String telefono;
-    
+
     public Persona(String tipoDocumento, String numeroDocumento, String nombre, String apellido, String telefono) {
         this.tipoDocumento = tipoDocumento;
         this.numeroDocumento = numeroDocumento;
