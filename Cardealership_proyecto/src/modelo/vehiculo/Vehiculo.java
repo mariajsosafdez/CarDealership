@@ -13,7 +13,7 @@ public abstract class Vehiculo {
 	protected String placa; //
 	protected String marca; //
 	protected String modelo; //
-	protected String year;  //Juan Jose: Es mejor ponerlo String No necesitamos hacer operaciones con el año (hacer Excepcion) ya la hago.
+	protected int year;  
 	protected float precio; //
 	protected String tipoDeCombustible; //
 	protected String transmision; //
@@ -31,7 +31,7 @@ public abstract class Vehiculo {
 		this.placa = placa;
 		this.marca = marca;
 		this.modelo = modelo;
-		this.year = String.valueOf(year);
+		this.year =  year;
 		this.precio = precio;
 		this.kilometraje = kilometraje;
 		this.color = color;
@@ -58,7 +58,7 @@ public abstract class Vehiculo {
 	}
 
 
-	public String getYear() {
+	public int getYear() {
 		return year;
 	}
 	

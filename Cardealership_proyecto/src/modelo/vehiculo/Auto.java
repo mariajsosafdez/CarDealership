@@ -13,7 +13,7 @@ public class Auto extends Vehiculo {
 	
 	public Auto(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
 			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible,
-			String carroceria, int numeroPuertas) throws Exception {
+			String carroceria, int numeroPuertas)  {
 		super(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color, estado, cilindraje,
 				disponible);
 		
