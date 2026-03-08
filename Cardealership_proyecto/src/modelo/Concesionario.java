@@ -111,24 +111,24 @@ public class Concesionario {
             String categoria) throws Exception {
 
 
-validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
-String categoriaValidada = validarCategoria(categoria);
+			validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
+			String categoriaValidada = validarCategoria(categoria);
 
 
-Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, tipoDeCombustible, 
+			Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, tipoDeCombustible, 
                 transmision, kilometraje, color, estado, cilindraje, 
                 disponible, categoriaValidada);
 
 
-nuevaMoto.validarCombustible(tipoDeCombustible);
-nuevaMoto.validarTransmision(transmision);
-nuevaMoto.validarEstado(estado);
+					nuevaMoto.validarCombustible(tipoDeCombustible);
+					nuevaMoto.validarTransmision(transmision);
+					nuevaMoto.validarEstado(estado);
 
 
-nuevaMoto.setPlaca(placa);
+					nuevaMoto.setPlaca(placa);
 
-this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
-this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
+						this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
+							this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
 }
 	
 	private String validarCategoria(String categoria) throws EObjectNull, EObjectInvalido {
@@ -146,12 +146,9 @@ this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
 	
 	
 	
+	public Vehiculo[] listarVehiculos() { return vehiculos; }
 	
-	
-	
-	
-	
-	
+
 
 	public void venderVehiculo(Vehiculo vehiculo, Cliente cliente, Vendedor vendedor)
 	        throws InvalidVentaException {
