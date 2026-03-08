@@ -2,7 +2,6 @@ package vista;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import modelo.*;
@@ -93,6 +92,9 @@ public class PanelCliente extends JPanel {
 
 		tablaCuerpo = new JTable(tabla);
 		JScrollPane scroll = new JScrollPane(tablaCuerpo);
+		
+		// AÑADIR TABLA Y FORMULARIO
+		
 		add(scroll, BorderLayout.CENTER);
 		add(Formulario, BorderLayout.SOUTH);
 
