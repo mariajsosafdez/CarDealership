@@ -7,8 +7,6 @@ import javax.swing.table.DefaultTableModel;
 
 import modelo.*;
 import modelo.persona.*;
-import org.eclipse.wb.swing.FocusTraversalOnArray;
-
 public class PanelCliente extends JPanel {
 	private Concesionario concesionario;
 
