@@ -9,7 +9,7 @@ public class Moto extends Vehiculo{
 	private String categoria;
 
 	public Moto(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
-			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible, String categoria) throws Exception {
+			String transmision, float kilometraje, String color, String estado, float cilindraje, boolean disponible, String categoria)  {
 		super(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color, estado, cilindraje,
 				disponible);
 		this.categoria = categoria; //Excepcion categoria no nula
