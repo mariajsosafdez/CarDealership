@@ -1,5 +1,14 @@
 package modelo;
+import java.util.Arrays;
+import java.util.Date;
 
+import modelo.venta.Venta;
+import modelo.venta.InvalidVentaException;
+
+import modelo.persona.Cliente;
+import modelo.persona.Vendedor;
+
+import modelo.vehiculo.Vehiculo;
 import modelo.vehiculo.*;
 import modelo.persona.*;
 import modelo.venta.*;
