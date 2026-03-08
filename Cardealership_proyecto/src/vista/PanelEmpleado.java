@@ -2,7 +2,6 @@ package vista;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import modelo.*;
@@ -28,7 +27,7 @@ public class PanelEmpleado extends JPanel {
 	private final JCheckBox chckbxVendedor = new JCheckBox();
 
 	// Labels
-	private JLabel lblRegCliente = new JLabel("Registrar un nuevo cliente:");
+	private JLabel lblRegCliente = new JLabel("Registrar un nuevo empleado:");
 	private JLabel lblTipoDoc = new JLabel("Tipo de documento: ");
 	private String[] opciones = { " ", "CC", "CE", "Pasaporte" };
 	private JLabel lblDocumento = new JLabel("Documento:");
@@ -82,8 +81,8 @@ public class PanelEmpleado extends JPanel {
 		fila1.add(lblNombre);
 		fila1.add(txtNombre);
 
-		fila1.add(lblApellido);
-		fila1.add(txtApellido);
+		fila2.add(lblApellido);
+		fila2.add(txtApellido);
 
 		fila2.add(lblTelefono);
 		fila2.add(txtTelefono);
@@ -173,7 +172,7 @@ public class PanelEmpleado extends JPanel {
 
 					// concesionario.registrarEmpleado(tipoDoc, documento, nombre, apellido,
 					// telefono, email);
-					// Cliente c = concesionario.buscarCliente(documento);
+					// Empleado e = concesionario.buscarEmpleado(documento);
 					Empleado empleado = new Empleado(tipoDoc, documento, nombre, apellido, telefono, salario);
 					tabla.addRow(
 							new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario,"NA", empleado });
