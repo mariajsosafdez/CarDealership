@@ -8,7 +8,6 @@ public abstract class Persona {
     protected String apellido;
     protected String telefono;
 
-   
     public Persona(String tipoDocumento, String numeroDocumento, String nombre, String apellido, String telefono) {
         this.tipoDocumento = tipoDocumento;
         this.numeroDocumento = numeroDocumento;
@@ -22,9 +21,8 @@ public abstract class Persona {
     }
 
     public void setTipoDocumento(String tipoDocumento) throws ValidacionException {
-        if (tipoDocumento == null || tipoDocumento.trim().isEmpty()) {
+        if (tipoDocumento == null || tipoDocumento.trim().isEmpty())
             throw new ValidacionException("El tipo de documento no puede estar vacío.");
-        }
         this.tipoDocumento = tipoDocumento;
     }
 
@@ -33,17 +31,8 @@ public abstract class Persona {
     }
 
     public void setId(String id) throws ValidacionException {
-        if (id == null || id.trim().isEmpty()) {
+        if (id == null || id.trim().isEmpty())
             throw new ValidacionException("El número de documento no puede estar vacío.");
-        }
-        try {
-            long num = Long.parseLong(id.trim());
-            if (num <= 0) {
-                throw new ValidacionException("El número de documento debe ser un número positivo.");
-            }
-        } catch (NumberFormatException e) {
-            throw new ValidacionException("El número de documento debe contener solo dígitos.");
-        }
         this.numeroDocumento = id;
     }
 
@@ -52,9 +41,8 @@ public abstract class Persona {
     }
 
     public void setNombre(String nombre) throws ValidacionException {
-        if (nombre == null || nombre.trim().isEmpty()) {
+        if (nombre == null || nombre.trim().isEmpty())
             throw new ValidacionException("El nombre no puede estar vacío.");
-        }
         this.nombre = nombre;
     }
 
@@ -63,9 +51,8 @@ public abstract class Persona {
     }
 
     public void setApellido(String apellido) throws ValidacionException {
-        if (apellido == null || apellido.trim().isEmpty()) {
+        if (apellido == null || apellido.trim().isEmpty())
             throw new ValidacionException("El apellido no puede estar vacío.");
-        }
         this.apellido = apellido;
     }
 
@@ -74,9 +61,10 @@ public abstract class Persona {
     }
 
     public void setTelefono(String telefono) throws ValidacionException {
-        if (telefono == null || telefono.trim().isEmpty()) {
+        if (telefono == null || telefono.trim().isEmpty())
             throw new ValidacionException("El teléfono no puede estar vacío.");
-        }
+        this.telefono = telefono;
+    }
 
     @Override
     public String toString() {
