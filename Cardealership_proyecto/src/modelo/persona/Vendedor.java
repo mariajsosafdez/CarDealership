@@ -1,5 +1,8 @@
 package modelo.persona;
 
+
+import modelo.venta.Venta;
+
 public class Vendedor extends Empleado {
 
     private int vehiculosVendidos;
