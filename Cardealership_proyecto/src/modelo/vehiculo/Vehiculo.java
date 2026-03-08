@@ -63,7 +63,7 @@ public abstract class Vehiculo {
 	}
 	
 	
-	protected float getPrecio() {  
+	public float getPrecio() {  
 		return precio;
 	}
 
