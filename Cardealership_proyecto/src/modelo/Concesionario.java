@@ -374,5 +374,50 @@ public class Concesionario {
 	public Vehiculo[] listarVehiculos() {
 		return Arrays.copyOf(vehiculos, vehiculos.length);
 	}
+	
+	public Vehiculo buscarVehiculos(String placa) {
+		
+		int i = 0;
+		
+		while(i < vehiculos.length && !vehiculos[i].getPlaca().equalsIgnoreCase(placa)) {
+			i++;
+		}
+		if(i == vehiculos.length) {
+			return null;
+		}
+		return vehiculos[i];
+	}
+	
+	
+	public int buscarVehiculosIndex(String placa) {
+		
+		int i = 0;
+		
+		while (i < vehiculos.length && !vehiculos[i].getPlaca().equalsIgnoreCase(placa)) {
+			i++;
+		}
+		if (i == vehiculos.length) {
+			return -1;
+		}
+		return i;
+
+	}
+	
+	public boolean eliminarVehiculo(String placa) {
+
+		int index = buscarVehiculosIndex(placa);
+		if (index == -1)
+			return false;
+		Vehiculo[] nuevo = new Vehiculo[vehiculos.length - 1];
+		int i = 0, j = 0;
+		while (i < vehiculos.length) {
+			if (i != index)
+				nuevo[j++] = vehiculos[i];
+			i++;
+		}
+		vehiculos = nuevo;
+		return true;
+	}
+	
 
 }
