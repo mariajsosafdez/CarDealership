@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 
 import modelo.*;
 import modelo.persona.*;
+
 public class PanelCliente extends JPanel {
 	private Concesionario concesionario;
 
@@ -35,8 +36,7 @@ public class PanelCliente extends JPanel {
 	private final JPanel panelBorrar = new JPanel();
 	private final JButton btnEliminar = new JButton("Eliminar");
 
-	// Cargar Clientes el arreglo de clientes en concesionario que se cargan desde
-	// los ficheros
+	//TODO CARGAR LOS CLIENTES DESDE EL FICHERO
 	public void cargarClientes() {
 		for (Cliente c : concesionario.listarClientes()) {
 			tabla.addRow(new Object[] { c.getTipoDocumento(), c.getId(), c.getNombre(), c.getApellido(),
@@ -92,9 +92,9 @@ public class PanelCliente extends JPanel {
 
 		tablaCuerpo = new JTable(tabla);
 		JScrollPane scroll = new JScrollPane(tablaCuerpo);
-		
+
 		// AÑADIR TABLA Y FORMULARIO
-		
+
 		add(scroll, BorderLayout.CENTER);
 		add(Formulario, BorderLayout.SOUTH);
 
@@ -107,8 +107,9 @@ public class PanelCliente extends JPanel {
 			if (tablaCuerpo.getSelectedColumn() != -1) {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
 				String documento = (String) tabla.getValueAt(filaEliminar, 1);
-				boolean estadoEliminar = true; // concesionario.eliminarCliente(concesionario.buscarClienteIndex(documento));
-
+				boolean estadoEliminar = concesionario
+						.eliminarCliente((concesionario.buscarCliente(documento)).getId());
+				//TODO ELIMINAR DEL FICHERO
 				if (estadoEliminar) {
 					// Buscar el cliente
 					tabla.removeRow(filaEliminar);
@@ -137,11 +138,16 @@ public class PanelCliente extends JPanel {
 			if (!tipoDoc.isBlank() && !documento.isBlank() && !nombre.isBlank() && !apellido.isBlank()
 					&& !telefono.isBlank() && !email.isBlank()) {
 
-				Cliente cliente = new Cliente(tipoDoc, documento, nombre, apellido, telefono, email);
-				// concesionario.registrarCliente(tipoDoc, documento, nombre, apellido,
-				// telefono, email);
-				// Cliente c = concesionario.buscarCliente(documento);
-				tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, email, cliente });
+				// TODO RESOLVER LO DEL TRYCATCH
+				// TODO AÑADIR AL FICHERO
+				try {
+					concesionario.registrarCliente(tipoDoc, documento, nombre, apellido, telefono, email);
+					Cliente c = concesionario.buscarCliente(documento);
+					tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, email, c });
+				} catch (ValidacionException ex) {
+					ex.getMessage();
+					JOptionPane.showMessageDialog(this, "No se pudo registrar el cliente");
+				}
 
 				cbTipoDoc.setSelectedItem(" ");
 				txtDocumento.setText("");
@@ -151,7 +157,7 @@ public class PanelCliente extends JPanel {
 				txtEmail.setText("");
 
 			} else {
-				JOptionPane.showMessageDialog(this, "Complete todos los campos");
+				JOptionPane.showMessageDialog(this, "Complete todos los campos correctamente");
 			}
 		});
 

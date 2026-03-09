@@ -7,7 +7,6 @@ import javax.swing.table.DefaultTableModel;
 import modelo.*;
 import modelo.persona.*;
 
-
 public class PanelEmpleado extends JPanel {
 	private Concesionario concesionario;
 
@@ -39,8 +38,7 @@ public class PanelEmpleado extends JPanel {
 	private final JPanel panelBorrar = new JPanel();
 	private final JButton btnEliminar = new JButton("Eliminar");
 
-	// Cargar Empleados el arreglo de clientes en concesionario que se cargan desde
-	// los ficheros
+	// TODO CARGAR EMPLEADOS DESDE LOS FICHEROS
 	public void cargarEmpleados() {
 		for (Empleado e : concesionario.listarEmpleados()) {
 			if (e instanceof Vendedor) {
@@ -124,8 +122,10 @@ public class PanelEmpleado extends JPanel {
 			if (tablaCuerpo.getSelectedColumn() != -1) {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
 				String documento = (String) tabla.getValueAt(filaEliminar, 1);
-				boolean estadoEliminar = true; // concesionario.eliminarEmpleado(concesionario.buscarEmpleadoIndex(documento));
+				boolean estadoEliminar = concesionario
+						.eliminarEmpleado((concesionario.buscarEmpleado(documento)).getId());
 
+				// TODO ELIMINAR DEL FICHERO
 				if (estadoEliminar) {
 					// Buscar el empleado
 					tabla.removeRow(filaEliminar);
@@ -164,18 +164,31 @@ public class PanelEmpleado extends JPanel {
 			if (!tipoDoc.isBlank() && !documento.isBlank() && !nombre.isBlank() && !apellido.isBlank()
 					&& !telefono.isBlank() && salario >= 0) {
 
+				// TODO RESOLVER LO DEL TRYCATCH
+				// TODO AÑADIR AL FICHERO
+
 				if (isVendedor) {
-					Empleado vendedor = new Vendedor(tipoDoc, documento, nombre, apellido, telefono, salario);
-					tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, 0, vendedor });
+					try {
+						concesionario.registrarVendedor(tipoDoc, documento, nombre, apellido, telefono, salario);
+						Empleado v = concesionario.buscarEmpleado(documento);
+						tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, 0, v });
+					} catch (ValidacionException ex) {
+						ex.getMessage();
+						JOptionPane.showMessageDialog(this, "No se pudo registrar el vendedor");
+					}
 
 				} else {
 
-					// concesionario.registrarEmpleado(tipoDoc, documento, nombre, apellido,
-					// telefono, email);
-					// Empleado e = concesionario.buscarEmpleado(documento);
-					Empleado empleado = new Empleado(tipoDoc, documento, nombre, apellido, telefono, salario);
-					tabla.addRow(
-							new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario,"NA", empleado });
+					try {
+						concesionario.registrarEmpleado(tipoDoc, documento, nombre, apellido, telefono, salario);
+						Empleado em = concesionario.buscarEmpleado(documento);
+						tabla.addRow(
+								new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, "NA", em });
+					} catch (ValidacionException ex) {
+						ex.getMessage();
+						JOptionPane.showMessageDialog(this, "No se pudo registrar el empleado");
+					}
+
 				}
 
 				cbTipoDoc.setSelectedItem(" ");
@@ -187,7 +200,7 @@ public class PanelEmpleado extends JPanel {
 				chckbxVendedor.setSelected(false);
 
 			} else {
-				JOptionPane.showMessageDialog(this, "Complete todos los campos");
+				JOptionPane.showMessageDialog(this, "Complete todos los campos correctamente");
 			}
 		});
 

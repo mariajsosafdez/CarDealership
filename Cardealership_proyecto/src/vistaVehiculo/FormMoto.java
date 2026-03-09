@@ -6,6 +6,10 @@ import javax.swing.table.DefaultTableModel;
 
 import modelo.Concesionario;
 import modelo.vehiculo.*;
+import modelo.vehiculo.excepciones.EObjectExiste;
+import modelo.vehiculo.excepciones.EObjectInvalido;
+import modelo.vehiculo.excepciones.EObjectNull;
+import modelo.vehiculo.excepciones.EObjectVoid;
 
 public class FormMoto extends JPanel {
 	private Concesionario concesionario;
@@ -25,6 +29,16 @@ public class FormMoto extends JPanel {
 	private JTextField txtCilindraje;
 	private JTextField txtCategoria;
 
+	// TODO CARGAR LOS VEHICULOS DESDE EL FICHERO
+		public void cargarAutos() {
+			for (Vehiculo a : concesionario.listarVehiculos()) {
+				if (a instanceof Moto) {
+					tablaR.addRow(new Object[] { a.getPlaca(), a.getMarca(), a.getModelo(), a.getYear(), a.getPrecio() });
+				}
+
+			}
+		}
+		
 	public FormMoto(Concesionario concesionario, DefaultTableModel tablaR) {
 		setLayout(new BorderLayout(0, 0));
 
@@ -159,10 +173,14 @@ public class FormMoto extends JPanel {
 					&& !transmision.isBlank() && kilometraje >= 0 && !color.isBlank() && !estado.isBlank() && cilindraje >= 0 && !categoria.isBlank()) {
 
 
-				// concesionario.registrarMoto(placa, marca, modelo, año, precio, );
-				//Moto m = concesionario.buscarVehiculo(placa);
-				//Vehiculo m = new Moto(placa, marca, modelo, año, precio, combustible, transmision, kilometraje, color, estado, cilindraje, categoria);
-				tablaR.addRow(new Object[] { placa, marca, modelo, año, precio, /*,m*/});
+//				try {
+//					concesionario.registrarMoto(placa, marca, modelo, año, precio, (String) tipoCombustible.getSelectedItem(), (String) tipoTransmision.getSelectedItem(), kilometraje, color, (String) tipoEstado.getSelectedItem(), cilindraje, true, categoria);
+//					// Vehiculo a = new concesionario.buscarVehiculo(placa);
+//					tablaR.addRow(new Object[] { placa, marca, modelo, año, precio, /* m */ });
+//				} catch (EObjectNull | EObjectInvalido | EObjectVoid | EObjectExiste ex) {
+//					JOptionPane.showMessageDialog(this, "No se pudo registrar el Auto");
+//					ex.getMessage();
+//				}
 
 				txtPlaca.setText("");
 				txtMarca.setText("");

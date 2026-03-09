@@ -4,6 +4,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import modelo.Concesionario;
+import modelo.persona.Cliente;
+import modelo.vehiculo.Auto;
+import modelo.vehiculo.Vehiculo;
+import modelo.vehiculo.excepciones.EObjectExiste;
+import modelo.vehiculo.excepciones.EObjectInvalido;
+import modelo.vehiculo.excepciones.EObjectNull;
+import modelo.vehiculo.excepciones.EObjectVoid;
 
 import java.awt.*;
 
@@ -25,6 +32,16 @@ public class FormAuto extends JPanel {
 	private JTextField txtCilindraje;
 	private JTextField txtNumeroPuertas;
 	private JTextField txtCarroceria;
+
+	// TODO CARGAR LOS VEHICULOS DESDE EL FICHERO
+	public void cargarAutos() {
+		for (Vehiculo a : concesionario.listarVehiculos()) {
+			if (a instanceof Auto) {
+				tablaL.addRow(new Object[] { a.getPlaca(), a.getMarca(), a.getModelo(), a.getYear(), a.getPrecio() });
+			}
+
+		}
+	}
 
 	public FormAuto(Concesionario concesionario, DefaultTableModel tablaL) {
 
@@ -164,7 +181,7 @@ public class FormAuto extends JPanel {
 			}
 			try {
 				numeroPuertas = Integer.parseInt(txtNumeroPuertas.getText());
-			}catch(NumberFormatException ex) {
+			} catch (NumberFormatException ex) {
 				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
 			}
 
@@ -172,11 +189,17 @@ public class FormAuto extends JPanel {
 					&& !transmision.isBlank() && kilometraje >= 0 && !color.isBlank() && !estado.isBlank()
 					&& cilindraje >= 0 && numeroPuertas > 0 && !carroceria.isBlank()) {
 
-				// concesionario.registrarMoto(placa, marca, modelo, año, precio, );
-				// Moto m = concesionario.buscarVehiculo(placa);
-				// Vehiculo m = new Moto(placa, marca, modelo, año, precio, combustible,
-				// transmision, kilometraje, color, estado, cilindraje, categoria);
-				tablaL.addRow(new Object[] { placa, marca, modelo, año, precio, /* ,m */ });
+				try {
+					concesionario.registrarAuto(placa, marca, modelo, año, precio,
+							(String) tipoCombustible.getSelectedItem(), (String) tipoTransmision.getSelectedItem(),
+							kilometraje, color, (String) tipoEstado.getSelectedItem(), cilindraje, true, carroceria,
+							numeroPuertas);
+					// Vehiculo a = new concesionario.buscarVehiculo(placa);
+					tablaL.addRow(new Object[] { placa, marca, modelo, año, precio, /* m */ });
+				} catch (EObjectNull | EObjectInvalido | EObjectVoid | EObjectExiste ex) {
+					JOptionPane.showMessageDialog(this, "No se pudo registrar el Auto");
+					ex.getMessage();
+				}
 
 				txtPlaca.setText("");
 				txtMarca.setText("");
