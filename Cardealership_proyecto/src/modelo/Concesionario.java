@@ -371,9 +371,7 @@ public class Concesionario {
 		this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
 	}
 
-	public Vehiculo[] listarVehiculos() {
-		return Arrays.copyOf(vehiculos, vehiculos.length);
-	}
+	
 	
 	public Vehiculo buscarVehiculos(String placa) {
 		
@@ -419,5 +417,8 @@ public class Concesionario {
 		return true;
 	}
 	
+	public Vehiculo[] listarVehiculos() {
+		return Arrays.copyOf(vehiculos, vehiculos.length);
+	}
 
 }
