@@ -1,13 +1,10 @@
 package modelo;
+
 import java.util.Arrays;
 import java.util.Date;
 
 import modelo.venta.Venta;
 import modelo.venta.InvalidVentaException;
-
-import modelo.persona.Cliente;
-import modelo.persona.Vendedor;
-
 import modelo.vehiculo.Vehiculo;
 import modelo.vehiculo.*;
 import modelo.persona.*;
@@ -25,9 +22,10 @@ public class Concesionario {
 	private Vehiculo vehiculos[] = new Vehiculo[0];
 	private Venta ventas[] = new Venta[0];
 
-	public Concesionario(String nombre) {
+	// Concesionario
+	public Concesionario(String nombre) /*throws ValidacionException*/ {
 		if (nombre.isEmpty() || nombre == null) {
-			throw new IllegalArgumentException("Ingrese un nombre válido para el concesionario");
+//			throw new ValidacionException("Ingrese un nombre válido para el concesionario");
 		}
 		this.nombre = nombre;
 	}
@@ -36,198 +34,345 @@ public class Concesionario {
 		return nombre;
 	}
 
-	public void setNombre(String nombre) {
+	public void setNombre(String nombre) /*throws ValidacionException */{
 		if (nombre.isEmpty() || nombre == null) {
-			throw new IllegalArgumentException("Ingrese un nombre válido para el concesionario");
+//			throw new ValidacionException("Ingrese un nombre válido para el concesionario");
 		}
 		this.nombre = nombre;
 	}
+	// CRUD CLIENTE
+
+	public void registrarCliente(String tipoDocumento, String numeroDocumento, String nombre, String apellido,
+			String telefono, String email) throws ValidacionException {
+		if (tipoDocumento == null || tipoDocumento.trim().isEmpty())
+			throw new ValidacionException("El tipo de documento no puede estar vacío.");
+		if (numeroDocumento == null || numeroDocumento.trim().isEmpty())
+			throw new ValidacionException("El número de documento no puede estar vacío.");
+		if (buscarCliente(numeroDocumento) != null)
+			throw new ValidacionException("Ya existe un cliente con ese número de documento.");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new ValidacionException("El nombre no puede estar vacío.");
+		if (apellido == null || apellido.trim().isEmpty())
+			throw new ValidacionException("El apellido no puede estar vacío.");
+		if (telefono == null || telefono.trim().isEmpty())
+			throw new ValidacionException("El teléfono no puede estar vacío.");
+		if (email == null || email.trim().isEmpty())
+			throw new ValidacionException("El email no puede estar vacío.");
+		if (!email.contains("@"))
+			throw new ValidacionException("El email no tiene un formato válido.");
+
+		Cliente c = new Cliente(tipoDocumento, numeroDocumento, nombre, apellido, telefono, email);
+		clientes = Arrays.copyOf(clientes, clientes.length + 1);
+		clientes[clientes.length - 1] = c;
+	}
+
+	public Cliente buscarCliente(String numeroDocumento) {
+		int i = 0;
+		while (i < clientes.length && !clientes[i].getId().equals(numeroDocumento)) {
+			i++;
+		}
+		if (i == clientes.length) {
+			return null;
+		}
+		return clientes[i];
+	}
+
+	public int buscarClienteIndex(String numeroDocumento) {
+		int i = 0;
+		while (i < clientes.length && !clientes[i].getId().equals(numeroDocumento)) {
+			i++;
+		}
+		if (i == clientes.length) {
+			return -1;
+		}
+		return i;
+	}
+
+	public boolean eliminarCliente(String numeroDocumento) {
+		int idx = buscarClienteIndex(numeroDocumento);
+		if (idx == -1)
+			return false;
+		Cliente[] nuevo = new Cliente[clientes.length - 1];
+		int i = 0, j = 0;
+		while (i < clientes.length) {
+			if (i != idx)
+				nuevo[j++] = clientes[i];
+			i++;
+		}
+		clientes = nuevo;
+		return true;
+	}
 
 	public Cliente[] listarClientes() {
-		return clientes;
+		return Arrays.copyOf(clientes, clientes.length);
 	}
+
+	// CRUD EMPLEADO
+
+	public void registrarEmpleado(String tipoDocumento, String numeroDocumento, String nombre, String apellido,
+			String telefono, float salario) throws ValidacionException {
+		if (tipoDocumento == null || tipoDocumento.trim().isEmpty())
+			throw new ValidacionException("El tipo de documento no puede estar vacío.");
+		if (numeroDocumento == null || numeroDocumento.trim().isEmpty())
+			throw new ValidacionException("El número de documento no puede estar vacío.");
+		if (buscarEmpleado(numeroDocumento) != null)
+			throw new ValidacionException("Ya existe un empleado con ese número de documento.");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new ValidacionException("El nombre no puede estar vacío.");
+		if (apellido == null || apellido.trim().isEmpty())
+			throw new ValidacionException("El apellido no puede estar vacío.");
+		if (telefono == null || telefono.trim().isEmpty())
+			throw new ValidacionException("El teléfono no puede estar vacío.");
+		if (salario < 0)
+			throw new ValidacionException("El salario no puede ser negativo.");
+
+		Empleado e = new Empleado(tipoDocumento, numeroDocumento, nombre, apellido, telefono, salario);
+		empleados = Arrays.copyOf(empleados, empleados.length + 1);
+		empleados[empleados.length - 1] = e;
+	}
+
+	public void registrarVendedor(String tipoDocumento, String numeroDocumento, String nombre, String apellido,
+			String telefono, float salario) throws ValidacionException {
+		if (tipoDocumento == null || tipoDocumento.trim().isEmpty())
+			throw new ValidacionException("El tipo de documento no puede estar vacío.");
+		if (numeroDocumento == null || numeroDocumento.trim().isEmpty())
+			throw new ValidacionException("El número de documento no puede estar vacío.");
+		if (buscarEmpleado(numeroDocumento) != null)
+			throw new ValidacionException("Ya existe un empleado/vendedor con ese número de documento.");
+		if (nombre == null || nombre.trim().isEmpty())
+			throw new ValidacionException("El nombre no puede estar vacío.");
+		if (apellido == null || apellido.trim().isEmpty())
+			throw new ValidacionException("El apellido no puede estar vacío.");
+		if (telefono == null || telefono.trim().isEmpty())
+			throw new ValidacionException("El teléfono no puede estar vacío.");
+		if (salario < 0)
+			throw new ValidacionException("El salario no puede ser negativo.");
+
+		Vendedor v = new Vendedor(tipoDocumento, numeroDocumento, nombre, apellido, telefono, salario);
+		empleados = Arrays.copyOf(empleados, empleados.length + 1);
+		empleados[empleados.length - 1] = v;
+	}
+
+	public Empleado buscarEmpleado(String numeroDocumento) {
+		int i = 0;
+		while (i < empleados.length && !empleados[i].getId().equals(numeroDocumento)) {
+			i++;
+		}
+		if (i == empleados.length) {
+			return null;
+		}
+		return empleados[i];
+	}
+
+	public int buscarEmpleadoIndex(String numeroDocumento) {
+		int i = 0;
+		while (i < empleados.length && !empleados[i].getId().equals(numeroDocumento)) {
+			i++;
+		}
+		if (i == empleados.length) {
+			return -1;
+		}
+		return i;
+	}
+
+	public boolean eliminarEmpleado(String numeroDocumento) {
+		int idx = buscarEmpleadoIndex(numeroDocumento);
+		if (idx == -1)
+			return false;
+		Empleado[] nuevo = new Empleado[empleados.length - 1];
+		int i = 0, j = 0;
+		while (i < empleados.length) {
+			if (i != idx)
+				nuevo[j++] = empleados[i];
+			i++;
+		}
+		empleados = nuevo;
+		return true;
+	}
+
 	public Empleado[] listarEmpleados() {
-		return empleados;
+		return Arrays.copyOf(empleados, empleados.length);
 	}
-	// No hacer getter y setters de los arrays, esos llevan otros nombres
-	// especificados en el diagrama, además de funcionalidades extra
-	
-	
-	public void registrarAuto(String placa, String marca, String modelo, int year, float precio, 
-            String tipoDeCombustible, String transmision, float kilometraje, 
-            String color, String estado, float cilindraje, boolean disponible, 
-            String carroceria, int numeroPuertas) throws EObjectNull,EObjectInvalido,EObjectVoid,EObjectExiste {
-		
-		validarDatosGenerales(marca,modelo,year,precio,kilometraje,cilindraje);
+
+	// CRUD VENTAS
+
+	public void venderVehiculo(Vehiculo vehiculo, Cliente cliente, Vendedor vendedor) throws InvalidVentaException {
+
+		if (vehiculo == null)
+			throw new InvalidVentaException("Vehiculo invalido");
+
+		if (cliente == null)
+			throw new InvalidVentaException("Cliente invalido");
+
+		if (vendedor == null)
+			throw new InvalidVentaException("Vendedor invalido");
+
+		if (!vehiculo.isDisponible())
+			throw new InvalidVentaException("Vehiculo no disponible");
+
+		String codigoVenta = "V" + (ventas.length + 1);
+
+		Venta venta = new Venta(codigoVenta, cliente, vendedor, new Date());
+
+		venta.agregarVehiculo(vehiculo);
+
+		ventas = Arrays.copyOf(ventas, ventas.length + 1);
+		ventas[ventas.length - 1] = venta;
+	}
+
+	public Venta buscarVenta(String codigo) {
+
+		int i = 0;
+
+		while (i < ventas.length && !ventas[i].getCodigo().equalsIgnoreCase(codigo)) {
+			i++;
+		}
+		if (i == ventas.length) {
+			return null;
+		}
+		return ventas[i];
+	}
+
+	public int buscarVentaIndex(String codigo) {
+
+		int i = 0;
+
+		while (i < ventas.length && !ventas[i].getCodigo().equalsIgnoreCase(codigo)) {
+			i++;
+		}
+		if (i == ventas.length) {
+			return -1;
+		}
+		return i;
+	}
+
+	public boolean eliminarVenta(String codigo) {
+
+		int index = buscarVentaIndex(codigo);
+		if (index == -1)
+			return false;
+		Venta[] nuevo = new Venta[ventas.length - 1];
+		int i = 0, j = 0;
+		while (i < ventas.length) {
+			if (i != index)
+				nuevo[j++] = ventas[i];
+			i++;
+		}
+		ventas = nuevo;
+		return true;
+	}
+
+	public Venta[] listarVentas() {
+
+		return Arrays.copyOf(ventas, ventas.length);
+	}
+
+	// VALIDAR DATOS PARA VEHICULOS
+	private void validarDatosGenerales(String marca, String modelo, int year, float precio, float kilometraje,
+			float cilindraje) throws EObjectNull, EObjectInvalido {
+		if (marca == null || marca.trim().isEmpty())
+			throw new EObjectNull("La marca es obligatoria.");
+		if (modelo == null || modelo.trim().isEmpty())
+			throw new EObjectNull("El modelo es obligatorio.");
+
+		if (year < 2014 || year > 2027)
+			throw new EObjectInvalido("Año fuera de rango (2014-2027).");
+
+		if (precio <= 0)
+			throw new EObjectInvalido("El precio debe ser un valor positivo.");
+		if (kilometraje < 0)
+			throw new EObjectInvalido("El kilometraje no puede ser negativo.");
+		if (cilindraje <= 0)
+			throw new EObjectInvalido("El cilindraje debe ser un valor positivo.");
+	}
+
+	private String validarCarroceria(String c) throws EObjectNull, EObjectInvalido {
+		if (c == null || c.trim().isEmpty())
+			throw new EObjectNull("La carrocería es obligatoria.");
+		String limpio = c.trim().toUpperCase();
+		switch (limpio) {
+		case "SEDAN":
+		case "HATCHBACK":
+		case "SUV":
+		case "PICKUP":
+		case "COUPE":
+		case "CONVERTIBLE":
+		case "FURGON":
+			return limpio;
+		default:
+			throw new EObjectInvalido("Carrocería '" + c
+					+ "' inválida. Opciones: Sedan, Hatchback, SUV, Pickup, Coupe, Convertible o Furgon.");
+		}
+
+	}
+
+	private String validarCategoria(String categoria) throws EObjectNull, EObjectInvalido {
+		if (categoria == null || categoria.trim().isEmpty())
+			throw new EObjectNull("La categoría de moto es obligatoria.");
+		String limpio = categoria.trim().toUpperCase();
+		switch (limpio) {
+		case "SCOOTER":
+		case "SPORT":
+		case "NAKED":
+		case "ENDURO":
+		case "TOURING":
+		case "CRUISER":
+		case "CROSS":
+			return limpio;
+		default:
+			throw new EObjectInvalido("Categoría '" + categoria
+					+ "' inválida. Opciones: Scooter, Sport, Naked, Enduro, Touring, Cruiser o Cross.");
+		}
+	}
+
+	// CRUD VEHICULOS
+
+	public void registrarAuto(String placa, String marca, String modelo, int year, float precio,
+			String tipoDeCombustible, String transmision, float kilometraje, String color, String estado,
+			float cilindraje, boolean disponible, String carroceria, int numeroPuertas)
+			throws EObjectNull, EObjectInvalido, EObjectVoid, EObjectExiste {
+
+		validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
 		String carroceriaValidada = validarCarroceria(carroceria);
-		
+
 		if (numeroPuertas < 2 || numeroPuertas > 6) {
 			throw new EObjectInvalido("El numero de puertas " + numeroPuertas + "debe estar entre 2 y 6");
 		}
-		
-		Auto nuevoAuto = new Auto(placa,marca,modelo,year,precio,tipoDeCombustible,transmision,kilometraje,color,estado,cilindraje,disponible,carroceriaValidada,numeroPuertas);
-		
+
+		Auto nuevoAuto = new Auto(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje,
+				color, estado, cilindraje, disponible, carroceriaValidada, numeroPuertas);
+
 		nuevoAuto.validarCombustible(tipoDeCombustible);
 		nuevoAuto.validarTransmision(transmision);
-        nuevoAuto.validarEstado(estado);
-        
-        nuevoAuto.setPlaca(placa);
-        
-        
-        this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
-        this.vehiculos[this.vehiculos.length - 1 ]= nuevoAuto;
-	    }	
+		nuevoAuto.validarEstado(estado);
+		nuevoAuto.setPlaca(placa);
 
-	
-	private void validarDatosGenerales(String marca, String modelo, int year, float precio, float kilometraje, float cilindraje) throws EObjectNull,EObjectInvalido {
-        if (marca == null || marca.trim().isEmpty()) throw new EObjectNull("La marca es obligatoria.");
-        if (modelo == null || modelo.trim().isEmpty()) throw new EObjectNull("El modelo es obligatorio.");
-        
- 
-        if (year < 2014 || year > 2027) throw new EObjectInvalido("Año fuera de rango (2014-2027).");
-        
-        if (precio <= 0) throw new EObjectInvalido("El precio debe ser un valor positivo.");
-        if (kilometraje < 0) throw new EObjectInvalido("El kilometraje no puede ser negativo.");
-        if (cilindraje <= 0) throw new EObjectInvalido("El cilindraje debe ser un valor positivo.");
-    }
-	
-	private String validarCarroceria(String c) throws EObjectNull, EObjectInvalido {
-        if (c == null || c.trim().isEmpty()) throw new EObjectNull("La carrocería es obligatoria.");
-        String limpio = c.trim().toUpperCase();
-        switch (limpio) {
-            case "SEDAN": case "HATCHBACK": case "SUV": case "PICKUP": 
-            case "COUPE": case "CONVERTIBLE": case "FURGON": 
-                return limpio;
-            default: 
-                throw new EObjectInvalido("Carrocería '" + c + "' inválida. Opciones: Sedan, Hatchback, SUV, Pickup, Coupe, Convertible o Furgon.");
-        }
-          
-    }
+		this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
+		this.vehiculos[this.vehiculos.length - 1] = nuevoAuto;
+	}
 
-	
-	public void registrarMoto(String placa, String marca, String modelo, int year, float precio, 
-            String tipoDeCombustible, String transmision, float kilometraje, 
-            String color, String estado, float cilindraje, boolean disponible, 
-            String categoria) throws Exception {
+	public void registrarMoto(String placa, String marca, String modelo, int year, float precio,
+			String tipoDeCombustible, String transmision, float kilometraje, String color, String estado,
+			float cilindraje, boolean disponible, String categoria) throws Exception {
 
+		validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
+		String categoriaValidada = validarCategoria(categoria);
 
-			validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
-			String categoriaValidada = validarCategoria(categoria);
+		Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color,
+				estado, cilindraje, disponible, categoriaValidada);
 
+		nuevaMoto.validarCombustible(tipoDeCombustible);
+		nuevaMoto.validarTransmision(transmision);
+		nuevaMoto.validarEstado(estado);
 
-			Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, tipoDeCombustible, 
-                transmision, kilometraje, color, estado, cilindraje, 
-                disponible, categoriaValidada);
+		nuevaMoto.setPlaca(placa);
 
+		this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
+		this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
+	}
 
-					nuevaMoto.validarCombustible(tipoDeCombustible);
-					nuevaMoto.validarTransmision(transmision);
-					nuevaMoto.validarEstado(estado);
+	public Vehiculo[] listarVehiculos() {
+		return Arrays.copyOf(vehiculos, vehiculos.length);
+	}
 
-
-					nuevaMoto.setPlaca(placa);
-
-						this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
-							this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
 }
-	
-	private String validarCategoria(String categoria) throws EObjectNull, EObjectInvalido {
-        if (categoria == null || categoria.trim().isEmpty()) throw new EObjectNull("La categoría de moto es obligatoria.");
-        String limpio = categoria.trim().toUpperCase();
-        switch (limpio) {
-            case "SCOOTER": case "SPORT": case "NAKED": case "ENDURO": 
-            case "TOURING": case "CRUISER": case "CROSS": 
-                return limpio;
-            default: 
-                throw new EObjectInvalido("Categoría '" + categoria + "' inválida. Opciones: Scooter, Sport, Naked, Enduro, Touring, Cruiser o Cross.");
-        }
-    }
-	
-	
-	
-	
-	public Vehiculo[] listarVehiculos() { return vehiculos; }
-	
-
-
-	public void venderVehiculo(Vehiculo vehiculo, Cliente cliente, Vendedor vendedor)
-	        throws InvalidVentaException {
-
-	    if (vehiculo == null)
-	        throw new InvalidVentaException("Vehiculo invalido");
-
-	    if (cliente == null)
-	        throw new InvalidVentaException("Cliente invalido");
-
-	    if (vendedor == null)
-	        throw new InvalidVentaException("Vendedor invalido");
-
-	    if (!vehiculo.isDisponible())
-	        throw new InvalidVentaException("Vehiculo no disponible");
-
-	    String codigoVenta = "V" + (ventas.length + 1);
-
-	    Venta venta = new Venta(codigoVenta, cliente, vendedor, new Date());
-
-	    venta.agregarVehiculo(vehiculo);
-
-	    ventas = Arrays.copyOf(ventas, ventas.length + 1);
-	    ventas[ventas.length - 1] = venta;
-	}
-	
-	public Venta buscarVenta(String codigo) {
-
-	    int i = 0;
-
-	    while (i < ventas.length) {
-
-	        if (ventas[i].getCodigo().equalsIgnoreCase(codigo)) {
-	            return ventas[i];
-	        }
-
-	        i++;
-	    }
-
-	    return null;
-	}
-	
-	public int buscarVentaIndex(String codigo) {
-
-	    int i = 0;
-
-	    while (i < ventas.length) {
-
-	        if (ventas[i].getCodigo().equalsIgnoreCase(codigo)) {
-	            return i;
-	        }
-
-	        i++;
-	    }
-
-	    return -1;
-	}
-	
-	public boolean eliminarVenta(int index) {
-
-	    if (index < 0 || index >= ventas.length)
-	        return false;
-
-	    int i = index;
-
-	    while (i < ventas.length - 1) {
-	        ventas[i] = ventas[i + 1];
-	        i++;
-	    }
-
-	    ventas = Arrays.copyOf(ventas, ventas.length - 1);
-
-	    return true;
-	}
-	
-	public Venta[] listarVentas() {
-
-	    return Arrays.copyOf(ventas, ventas.length);
-	}
-}
-
-
