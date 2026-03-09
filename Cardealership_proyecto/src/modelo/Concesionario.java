@@ -1,6 +1,7 @@
 package modelo;
 
 import java.util.Arrays;
+
 import java.util.Date;
 
 import modelo.venta.Venta;
@@ -13,6 +14,8 @@ import modelo.venta.*;
 import java.util.Arrays;
 import modelo.vehiculo.*;
 import modelo.vehiculo.excepciones.*;
+import utils.Utils;
+
 
 public class Concesionario {
 
@@ -267,63 +270,7 @@ public class Concesionario {
 		return Arrays.copyOf(ventas, ventas.length);
 	}
 
-	// VALIDAR DATOS PARA VEHICULOS
-	private void validarDatosGenerales(String marca, String modelo, int year, float precio, float kilometraje,
-			float cilindraje) throws EObjectNull, EObjectInvalido {
-		if (marca == null || marca.trim().isEmpty())
-			throw new EObjectNull("La marca es obligatoria.");
-		if (modelo == null || modelo.trim().isEmpty())
-			throw new EObjectNull("El modelo es obligatorio.");
-
-		if (year < 2014 || year > 2027)
-			throw new EObjectInvalido("Año fuera de rango (2014-2027).");
-
-		if (precio <= 0)
-			throw new EObjectInvalido("El precio debe ser un valor positivo.");
-		if (kilometraje < 0)
-			throw new EObjectInvalido("El kilometraje no puede ser negativo.");
-		if (cilindraje <= 0)
-			throw new EObjectInvalido("El cilindraje debe ser un valor positivo.");
-	}
-
-	private String validarCarroceria(String c) throws EObjectNull, EObjectInvalido {
-		if (c == null || c.trim().isEmpty())
-			throw new EObjectNull("La carrocería es obligatoria.");
-		String limpio = c.trim().toUpperCase();
-		switch (limpio) {
-		case "SEDAN":
-		case "HATCHBACK":
-		case "SUV":
-		case "PICKUP":
-		case "COUPE":
-		case "CONVERTIBLE":
-		case "FURGON":
-			return limpio;
-		default:
-			throw new EObjectInvalido("Carrocería '" + c
-					+ "' inválida. Opciones: Sedan, Hatchback, SUV, Pickup, Coupe, Convertible o Furgon.");
-		}
-
-	}
-
-	private String validarCategoria(String categoria) throws EObjectNull, EObjectInvalido {
-		if (categoria == null || categoria.trim().isEmpty())
-			throw new EObjectNull("La categoría de moto es obligatoria.");
-		String limpio = categoria.trim().toUpperCase();
-		switch (limpio) {
-		case "SCOOTER":
-		case "SPORT":
-		case "NAKED":
-		case "ENDURO":
-		case "TOURING":
-		case "CRUISER":
-		case "CROSS":
-			return limpio;
-		default:
-			throw new EObjectInvalido("Categoría '" + categoria
-					+ "' inválida. Opciones: Scooter, Sport, Naked, Enduro, Touring, Cruiser o Cross.");
-		}
-	}
+	
 
 	// CRUD VEHICULOS
 
@@ -332,20 +279,22 @@ public class Concesionario {
 			float cilindraje, boolean disponible, String carroceria, int numeroPuertas)
 			throws EObjectNull, EObjectInvalido, EObjectVoid, EObjectExiste {
 
-		validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
-		String carroceriaValidada = validarCarroceria(carroceria);
+		Utils.validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
+		String carroceriaValidada = Utils.validarCarroceria(carroceria);
+		String transmisionValidada = Utils.validarTransmision(transmision);
+		String combustibleValidado = Utils.validarCombustible(tipoDeCombustible);
+		String estadoValidado = Utils.validarEstado(estado);
 
 		if (numeroPuertas < 2 || numeroPuertas > 6) {
 			throw new EObjectInvalido("El numero de puertas " + numeroPuertas + "debe estar entre 2 y 6");
 		}
 
-		Auto nuevoAuto = new Auto(placa, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje,
-				color, estado, cilindraje, disponible, carroceriaValidada, numeroPuertas);
+		Auto nuevoAuto = new Auto(placa, marca, modelo, year, precio, combustibleValidado, transmisionValidada, kilometraje,
+				color, estadoValidado, cilindraje, disponible, carroceriaValidada, numeroPuertas);
 
-		nuevoAuto.validarCombustible(tipoDeCombustible);
-		nuevoAuto.validarTransmision(transmision);
-		nuevoAuto.validarEstado(estado);
 		nuevoAuto.setPlaca(placa);
+		
+		
 
 		this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
 		this.vehiculos[this.vehiculos.length - 1] = nuevoAuto;
@@ -355,15 +304,16 @@ public class Concesionario {
 			String tipoDeCombustible, String transmision, float kilometraje, String color, String estado,
 			float cilindraje, boolean disponible, String categoria) throws Exception {
 
-		validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
-		String categoriaValidada = validarCategoria(categoria);
+		Utils.validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
+		String categoriaValidada = Utils.validarCategoria(categoria);
+		String transmisionValidada = Utils.validarTransmision(transmision);
+		String combustibleValidado = Utils.validarCombustible(tipoDeCombustible);
+		String estadoValidado = Utils.validarEstado(estado);
 
-		Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color,
-				estado, cilindraje, disponible, categoriaValidada);
+		Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, combustibleValidado, transmisionValidada, kilometraje, color,
+				estadoValidado, cilindraje, disponible, categoriaValidada);
 
-		nuevaMoto.validarCombustible(tipoDeCombustible);
-		nuevaMoto.validarTransmision(transmision);
-		nuevaMoto.validarEstado(estado);
+		
 
 		nuevaMoto.setPlaca(placa);
 
@@ -371,6 +321,52 @@ public class Concesionario {
 		this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
 	}
 
+	
+	
+	public Vehiculo buscarVehiculos(String placa) {
+		
+		int i = 0;
+		
+		while(i < vehiculos.length && !vehiculos[i].getPlaca().equalsIgnoreCase(placa)) {
+			i++;
+		}
+		if(i == vehiculos.length) {
+			return null;
+		}
+		return vehiculos[i];
+	}
+	
+	
+	public int buscarVehiculosIndex(String placa) {
+		
+		int i = 0;
+		
+		while (i < vehiculos.length && !vehiculos[i].getPlaca().equalsIgnoreCase(placa)) {
+			i++;
+		}
+		if (i == vehiculos.length) {
+			return -1;
+		}
+		return i;
+
+	}
+	
+	public boolean eliminarVehiculo(String placa) {
+
+		int index = buscarVehiculosIndex(placa);
+		if (index == -1)
+			return false;
+		Vehiculo[] nuevo = new Vehiculo[vehiculos.length - 1];
+		int i = 0, j = 0;
+		while (i < vehiculos.length) {
+			if (i != index)
+				nuevo[j++] = vehiculos[i];
+			i++;
+		}
+		vehiculos = nuevo;
+		return true;
+	}
+	
 	public Vehiculo[] listarVehiculos() {
 		return Arrays.copyOf(vehiculos, vehiculos.length);
 	}
