@@ -1,11 +1,14 @@
 package modelo.vehiculo;
 
+
+import modelo.Concesionario;
 import modelo.vehiculo.excepciones.EObjectExiste;
 
 import modelo.vehiculo.excepciones.EObjectInvalido;
 import modelo.vehiculo.excepciones.EObjectNull;
 import modelo.vehiculo.excepciones.EObjectVoid;
 import utils.Utils;
+import vista.Ventana;
 
 public class Auto extends Vehiculo {
 
@@ -23,17 +26,6 @@ public class Auto extends Vehiculo {
 		this.numeroPuertas = numeroPuertas;
 		
 	}
-	
-	
-	@Override
-	public String toString() {
-		return "Auto [numeroPuertas=" + numeroPuertas + ", carroceria=" + carroceria + ", Placa()=" + getPlaca()
-				+ ", Marca()=" + getMarca() + ", Modelo()=" + getModelo() + ", Year()=" + getYear()
-				+ ", Precio()=" + getPrecio() + ", TipoDeCombustible()=" + getTipoDeCombustible()
-				+ ", Transmision()=" + getTransmision() + ", Kilometraje()=" + getKilometraje() + ", Color()="
-				+ getColor() + ",	()=" + getEstado() + ", Cilindraje()=" + getCilindraje()
-				+ ", isDisponible()=" + isDisponible() + "]";
-	}
 
 
 	public int getNumeroPuertas() {
@@ -47,33 +39,50 @@ public class Auto extends Vehiculo {
 
 
 	@Override
-	public void setPlaca(String placa)  throws EObjectInvalido,EObjectNull,EObjectExiste, EObjectVoid {
-	    // 1. Generación aleatoria
-	    if (placa == null || placa.trim().isEmpty()) {
-	        do {
-	            char[] buffer = new char[6];
-	            for (int i = 0; i < 3; i++) buffer[i] = getRandom(LETRAS);
-	            for (int i = 3; i < 6; i++) buffer[i] = getRandom(NUMEROS);
-	            placa = new String(buffer);
-	        } while (existePlaca(placa));
-	    }
+    public void setPlaca(String placaRecibida) throws EObjectInvalido, EObjectNull, EObjectExiste, EObjectVoid {
+        String placaFinal = (placaRecibida == null || placaRecibida.trim().isEmpty()) ? null : placaRecibida;
 
-	    // 2. Validación de formato
-	    if (!placa.matches("[A-Z]{3}\\d{3}")) {
-	        throw new EObjectInvalido("Formato inválido para Auto");
-	    }
+        // 1. Generación si es necesario
+        if (placaFinal == null) {
+            do {
+                char[] buffer = new char[6];
+                for (int i = 0; i < 3; i++) buffer[i] = getRandom(LETRAS);
+                for (int i = 3; i < 6; i++) buffer[i] = getRandom(NUMEROS);
+                placaFinal = new String(buffer);
+            } while (existePlaca(placaFinal)); 
+        }
 
-	    // 3. Lógica de registro UNIFICADA
-	    if (!placa.equals(this.placa)) {
-	        if (existePlaca(placa)) {
-	            throw new EObjectExiste("La placa: " + placa + " ya está registrada");
-	        }
-	        
-	        // ESTO ES LO QUE CAMBIA: Solo registramos si es diferente
-	        registrarPlaca(placa);
-	        this.placa = placa;
-	    }
-	    // Si son iguales, el método termina aquí sin hacer nada, lo cual es correcto.
+        // 2. Validar formato Auto (AAA111)
+        if (!placaFinal.matches("[A-Z]{3}\\d{3}")) {
+            throw new EObjectInvalido("Formato inválido para Auto (AAA111)");
+        }
+
+        // 3. Registro y Asignación
+        // Verificamos si es una placa nueva para este objeto
+        if (this.placa == null || !placaFinal.equalsIgnoreCase(this.placa)) {
+            registrarPlaca(placaFinal); // Esto lanza EObjectExiste si ya alguien la tiene
+            this.placa = placaFinal;    // ¡Crucial! Aquí se llena el dato para la tabla
+        }
+    }
+	
+	@Override
+	public String toString() {
+
+	    return "\nCARRO" +
+	           "\nPlaca: " + getPlaca() +
+	           "\nMarca: " + getMarca() +
+	           "\nModelo: " + getModelo() +
+	           "\nAño: " + getYear() +
+	           "\nPrecio: $" + getPrecio() +
+	           "\nCarrocería: " + carroceria +
+	           "\nPuertas: " + numeroPuertas +
+	           "\nCombustible: " + getTipoDeCombustible() +
+	           "\nTransmisión: " + getTransmision() +
+	           "\nKilometraje: " + getKilometraje() + " km" +
+	           "\nColor: " + getColor() +
+	           "\nCilindraje: " + getCilindraje() +
+	           "\nEstado: " + getEstado() +
+	           "\nDisponible: " + (isDisponible() ? "Sí" : "No");
 	}
 	
 

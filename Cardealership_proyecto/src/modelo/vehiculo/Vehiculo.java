@@ -28,7 +28,7 @@ public abstract class Vehiculo {
 			String transmision, float kilometraje,  String color, String estado, float cilindraje, boolean disponible)  {
 		super();
 		
-		this.placa = placa;
+		this.placa = null;
 		this.marca = marca;
 		this.modelo = modelo;
 		this.year =  year;
@@ -140,7 +140,7 @@ public abstract class Vehiculo {
 	    
 	    int i = 0;
 	   while( i < placasRegistradas.length) {
-		   if(placasRegistradas[i].equalsIgnoreCase(placa)) {
+		   if (placasRegistradas[i] != null && placasRegistradas[i].equalsIgnoreCase(placa)) {
 			   throw new EObjectExiste("La placa ya esta registrada");
 			   
 		   }

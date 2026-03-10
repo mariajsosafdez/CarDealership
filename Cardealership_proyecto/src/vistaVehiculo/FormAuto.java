@@ -4,6 +4,13 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import modelo.Concesionario;
+import modelo.persona.Cliente;
+import modelo.vehiculo.Auto;
+import modelo.vehiculo.Vehiculo;
+import modelo.vehiculo.excepciones.EObjectExiste;
+import modelo.vehiculo.excepciones.EObjectInvalido;
+import modelo.vehiculo.excepciones.EObjectNull;
+import modelo.vehiculo.excepciones.EObjectVoid;
 
 import java.awt.*;
 
@@ -24,10 +31,20 @@ public class FormAuto extends JPanel {
 	private JTextField txtColor;
 	private JTextField txtCilindraje;
 	private JTextField txtNumeroPuertas;
-	private JTextField txtCarroceria;
+
+	// TODO CARGAR LOS VEHICULOS DESDE EL FICHERO
+	public void cargarAutos() {
+		for (Vehiculo a : concesionario.listarVehiculos()) {
+			if (a instanceof Auto) {
+				tablaL.addRow(new Object[] { a.getPlaca(), a.getMarca(), a.getModelo(), a.getYear(), a.getPrecio() });
+			}
+
+		}
+	}
 
 	public FormAuto(Concesionario concesionario, DefaultTableModel tablaL) {
-
+		this.concesionario = concesionario;
+		
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel fila2 = new JPanel();
@@ -39,7 +56,8 @@ public class FormAuto extends JPanel {
 		String[] transmisiones = { " ", "MANUAL", "AUTOMATICA", "CVT", "DOBLE EMBRAGUE", "MANUAL AUTOMATIZADA",
 				"SECUENCIAL", "ELECTRONICA VARIABLE" };
 		String[] estados = { " ", "Nuevo", "Usado" };
-
+		String[] carrocerias = {" ","SEDAN","HATCHBACK","SUV","PICKUP","COUPE","CONVERTIBLE","FURGON"};
+		
 		JPanel fila1 = new JPanel();
 		add(fila1, BorderLayout.CENTER);
 		fila1.setLayout(new GridLayout(0, 4, 5, 5));
@@ -106,8 +124,8 @@ public class FormAuto extends JPanel {
 
 		JLabel lblCarroceria = new JLabel("Carrocería");
 		fila1.add(lblCarroceria);
-		txtCarroceria = new JTextField();
-		fila1.add(txtCarroceria);
+		JComboBox tipoCarroceria = new JComboBox(carrocerias);
+		fila1.add(tipoCarroceria);
 
 		// REGISTRAR AUTO
 		btnRegistrar.addActionListener(e -> {
@@ -124,7 +142,7 @@ public class FormAuto extends JPanel {
 			String estado = (String) tipoEstado.getSelectedItem();
 			float cilindraje = -1;
 			int numeroPuertas = 0;
-			String carroceria = txtCarroceria.getText();
+			String carroceria = (String) tipoCarroceria.getSelectedItem();
 
 			try {
 
@@ -132,7 +150,7 @@ public class FormAuto extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
+				JOptionPane.showMessageDialog(this, ex.getMessage());
 
 			}
 			try {
@@ -141,7 +159,7 @@ public class FormAuto extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
+				JOptionPane.showMessageDialog(this, ex.getMessage());
 
 			}
 			try {
@@ -150,7 +168,7 @@ public class FormAuto extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
+				JOptionPane.showMessageDialog(this, ex.getMessage());
 
 			}
 			try {
@@ -159,41 +177,53 @@ public class FormAuto extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
+				JOptionPane.showMessageDialog(this, ex.getMessage());
 
 			}
 			try {
 				numeroPuertas = Integer.parseInt(txtNumeroPuertas.getText());
-			}catch(NumberFormatException ex) {
-				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(this, ex.getMessage());
 			}
 
 			if (!marca.isBlank() && !modelo.isBlank() && año >= 1885 && precio >= 0 && !combustible.isBlank()
-					&& !transmision.isBlank() && kilometraje >= 0 && !color.isBlank() && !estado.isBlank()
-					&& cilindraje >= 0 && numeroPuertas > 0 && !carroceria.isBlank()) {
+			        && !transmision.isBlank() && kilometraje >= 0 && !color.isBlank() && !estado.isBlank()
+			        && cilindraje >= 0 && numeroPuertas > 0 && !carroceria.isBlank()) {
 
-				// concesionario.registrarMoto(placa, marca, modelo, año, precio, );
-				// Moto m = concesionario.buscarVehiculo(placa);
-				// Vehiculo m = new Moto(placa, marca, modelo, año, precio, combustible,
-				// transmision, kilometraje, color, estado, cilindraje, categoria);
-				tablaL.addRow(new Object[] { placa, marca, modelo, año, precio, /* ,m */ });
+			    try {
+			        Auto registrado = concesionario.registrarAuto(
+			                placa, marca, modelo, año, precio, combustible,
+			                transmision, kilometraje, color, estado,
+			                cilindraje, true, carroceria, numeroPuertas);
 
-				txtPlaca.setText("");
-				txtMarca.setText("");
-				txtModelo.setText("");
-				txtAño.setText("");
-				txtPrecio.setText("");
-				tipoCombustible.setSelectedItem(0);
-				tipoTransmision.setSelectedIndex(0);
-				txtKilometraje.setText("");
-				txtColor.setText("");
-				tipoEstado.setSelectedIndex(0);
-				txtCilindraje.setText("");
-				txtNumeroPuertas.setText("");
-				txtCarroceria.setText("");
+			        tablaL.addRow(new Object[] { registrado.getPlaca(), marca, modelo, año, precio });
+
+			        txtPlaca.setText("");
+			        txtMarca.setText("");
+			        txtModelo.setText("");
+			        txtAño.setText("");
+			        txtPrecio.setText("");
+			        tipoCombustible.setSelectedIndex(0);
+			        tipoTransmision.setSelectedIndex(0);
+			        txtKilometraje.setText("");
+			        txtColor.setText("");
+			        tipoEstado.setSelectedIndex(0);
+			        txtCilindraje.setText("");
+			        txtNumeroPuertas.setText("");
+			        tipoCarroceria.setSelectedIndex(0);
+
+			    } catch (EObjectExiste ex) {
+			        JOptionPane.showMessageDialog(this, "La placa ya está registrada");
+			    } catch (EObjectInvalido ex) {
+			        JOptionPane.showMessageDialog(this, "Dato inválido: " + ex.getMessage());
+			    } catch (EObjectNull ex) {
+			        JOptionPane.showMessageDialog(this, "Dato nulo: " + ex.getMessage());
+			    } catch (EObjectVoid ex) {
+			        JOptionPane.showMessageDialog(this, "Dato vacío: " + ex.getMessage());
+			    }
 
 			} else {
-				JOptionPane.showMessageDialog(this, "Complete todos los campos");
+			    JOptionPane.showMessageDialog(this, "Complete todos los campos");
 			}
 		});
 

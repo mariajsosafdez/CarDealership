@@ -143,10 +143,26 @@ public class Venta implements Serializable {
     @Override
     public String toString() {
 
-        return "Venta: " + codigo +
-                "\nCliente: " + cliente +
-                "\nVendedor: " + vendedor +
-                "\nFecha: " + fecha +
-                "\nTotal: $" + total;
+        String listaVehiculos = "";
+
+        for (Vehiculo v : vehiculos) {
+            listaVehiculos += "   - " + v.getPlaca() + " | "
+                            + v.getMarca() + " "
+                            + v.getModelo() + " | $"
+                            + v.getPrecio() + "\n";
+        }
+
+        return "\n=========== VENTA " + codigo + " ===========\n"
+             + "Fecha: " + fecha + "\n"
+             + "\nCliente:\n"
+             + "   " + cliente.getNombre() + " " + cliente.getApellido()
+             + " (" + cliente.getId() + ")\n"
+             + "\nVendedor:\n"
+             + "   " + vendedor.getNombre() + " " + vendedor.getApellido()
+             + " (" + vendedor.getId() + ")\n"
+             + "\nVehículos vendidos:\n"
+             + listaVehiculos
+             + "\nTOTAL: $" + total
+             + "\n=================================\n";
     }
 }

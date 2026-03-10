@@ -7,7 +7,6 @@ import javax.swing.table.DefaultTableModel;
 import modelo.*;
 import modelo.persona.*;
 
-
 public class PanelEmpleado extends JPanel {
 	private Concesionario concesionario;
 
@@ -39,8 +38,7 @@ public class PanelEmpleado extends JPanel {
 	private final JPanel panelBorrar = new JPanel();
 	private final JButton btnEliminar = new JButton("Eliminar");
 
-	// Cargar Empleados el arreglo de clientes en concesionario que se cargan desde
-	// los ficheros
+	// TODO CARGAR EMPLEADOS DESDE LOS FICHEROS
 	public void cargarEmpleados() {
 		for (Empleado e : concesionario.listarEmpleados()) {
 			if (e instanceof Vendedor) {
@@ -52,6 +50,25 @@ public class PanelEmpleado extends JPanel {
 						e.getTelefono(), e.getSalario(), "NA", e });
 			}
 		}
+	}
+	//recargar vendedores
+	public void actualizarTabla() {
+
+	    tabla.setRowCount(0); // limpia la tabla
+
+	    for (Empleado e : concesionario.listarEmpleados()) {
+
+	        tabla.addRow(new Object[]{
+	        	e.getTipoDocumento(),
+	            e.getId(),
+	            e.getNombre(),
+	            e.getApellido(),
+	            e.getTelefono(),
+	            e.getSalario(),
+	            e instanceof Vendedor ? ((Vendedor) e).getVehiculosVendidos() : "NA"
+	        });
+
+	    }
 	}
 
 	public PanelEmpleado(Concesionario concesionario) {
@@ -121,11 +138,13 @@ public class PanelEmpleado extends JPanel {
 		panelBorrar.add(btnEliminar, BorderLayout.SOUTH);
 
 		btnEliminar.addActionListener(e -> {
-			if (tablaCuerpo.getSelectedColumn() != -1) {
+			if (tablaCuerpo.getSelectedRow() != -1) {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
 				String documento = (String) tabla.getValueAt(filaEliminar, 1);
-				boolean estadoEliminar = true; // concesionario.eliminarEmpleado(concesionario.buscarEmpleadoIndex(documento));
+				boolean estadoEliminar = concesionario
+						.eliminarEmpleado((concesionario.buscarEmpleado(documento)).getId());
 
+				// TODO ELIMINAR DEL FICHERO
 				if (estadoEliminar) {
 					// Buscar el empleado
 					tabla.removeRow(filaEliminar);
@@ -157,28 +176,39 @@ public class PanelEmpleado extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
+				JOptionPane.showMessageDialog(this, ex.getMessage());
 
 			}
 
 			if (!tipoDoc.isBlank() && !documento.isBlank() && !nombre.isBlank() && !apellido.isBlank()
 					&& !telefono.isBlank() && salario >= 0) {
 
+				// TODO RESOLVER LO DEL TRYCATCH
+				// TODO AÑADIR AL FICHERO
+
 				if (isVendedor) {
-					Empleado vendedor = new Vendedor(tipoDoc, documento, nombre, apellido, telefono, salario);
-					tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, 0, vendedor });
+					try {
+						concesionario.registrarVendedor(tipoDoc, documento, nombre, apellido, telefono, salario);
+						Empleado v = concesionario.buscarEmpleado(documento);
+						tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, 0, v });
+					} catch (ValidacionException ex) {
+						JOptionPane.showMessageDialog(this, ex.getMessage());
+					}
 
 				} else {
 
-					// concesionario.registrarEmpleado(tipoDoc, documento, nombre, apellido,
-					// telefono, email);
-					// Empleado e = concesionario.buscarEmpleado(documento);
-					Empleado empleado = new Empleado(tipoDoc, documento, nombre, apellido, telefono, salario);
-					tabla.addRow(
-							new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario,"NA", empleado });
+					try {
+						concesionario.registrarEmpleado(tipoDoc, documento, nombre, apellido, telefono, salario);
+						Empleado em = concesionario.buscarEmpleado(documento);
+						tabla.addRow(
+								new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, "NA", em });
+					} catch (ValidacionException ex) {
+						JOptionPane.showMessageDialog(this, ex.getMessage());
+					}
+
 				}
 
-				cbTipoDoc.setSelectedItem(" ");
+				cbTipoDoc.setSelectedIndex(0);
 				txtDocumento.setText("");
 				txtNombre.setText("");
 				txtApellido.setText("");
@@ -187,7 +217,7 @@ public class PanelEmpleado extends JPanel {
 				chckbxVendedor.setSelected(false);
 
 			} else {
-				JOptionPane.showMessageDialog(this, "Complete todos los campos");
+				JOptionPane.showMessageDialog(this, "Complete todos los campos correctamente");
 			}
 		});
 

@@ -16,7 +16,6 @@ import modelo.vehiculo.*;
 import modelo.vehiculo.excepciones.*;
 import utils.Utils;
 
-
 public class Concesionario {
 
 	private String nombre;
@@ -26,7 +25,7 @@ public class Concesionario {
 	private Venta ventas[] = new Venta[0];
 
 	// Concesionario
-	public Concesionario(String nombre) /*throws ValidacionException*/ {
+	public Concesionario(String nombre) /* throws ValidacionException */ {
 		if (nombre.isEmpty() || nombre == null) {
 //			throw new ValidacionException("Ingrese un nombre válido para el concesionario");
 		}
@@ -37,7 +36,7 @@ public class Concesionario {
 		return nombre;
 	}
 
-	public void setNombre(String nombre) /*throws ValidacionException */{
+	public void setNombre(String nombre) /* throws ValidacionException */ {
 		if (nombre.isEmpty() || nombre == null) {
 //			throw new ValidacionException("Ingrese un nombre válido para el concesionario");
 		}
@@ -199,7 +198,7 @@ public class Concesionario {
 
 	// CRUD VENTAS
 
-	public void venderVehiculo(Vehiculo vehiculo, Cliente cliente, Vendedor vendedor) throws InvalidVentaException {
+	public Venta venderVehiculo(Vehiculo vehiculo, Cliente cliente, Vendedor vendedor) throws InvalidVentaException {
 
 		if (vehiculo == null)
 			throw new InvalidVentaException("Vehiculo invalido");
@@ -221,6 +220,7 @@ public class Concesionario {
 
 		ventas = Arrays.copyOf(ventas, ventas.length + 1);
 		ventas[ventas.length - 1] = venta;
+		return venta;
 	}
 
 	public Venta buscarVenta(String codigo) {
@@ -270,39 +270,40 @@ public class Concesionario {
 		return Arrays.copyOf(ventas, ventas.length);
 	}
 
-	
-
 	// CRUD VEHICULOS
 
-	public void registrarAuto(String placa, String marca, String modelo, int year, float precio,
+	public Auto registrarAuto(String placa, String marca, String modelo, int year, float precio,
 			String tipoDeCombustible, String transmision, float kilometraje, String color, String estado,
 			float cilindraje, boolean disponible, String carroceria, int numeroPuertas)
 			throws EObjectNull, EObjectInvalido, EObjectVoid, EObjectExiste {
 
+		// 1. Validaciones previas de Utils
 		Utils.validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
-		String carroceriaValidada = Utils.validarCarroceria(carroceria);
-		String transmisionValidada = Utils.validarTransmision(transmision);
-		String combustibleValidado = Utils.validarCombustible(tipoDeCombustible);
-		String estadoValidado = Utils.validarEstado(estado);
 
 		if (numeroPuertas < 2 || numeroPuertas > 6) {
-			throw new EObjectInvalido("El numero de puertas " + numeroPuertas + "debe estar entre 2 y 6");
+			throw new EObjectInvalido("El número de puertas debe estar entre 2 y 6");
 		}
 
-		Auto nuevoAuto = new Auto(placa, marca, modelo, year, precio, combustibleValidado, transmisionValidada, kilometraje,
-				color, estadoValidado, cilindraje, disponible, carroceriaValidada, numeroPuertas);
-
+		// 2. Crear instancia temporal
+		Auto nuevoAuto = new Auto(null, marca, modelo, year, precio, tipoDeCombustible, transmision, kilometraje, color,
+				estado, cilindraje, disponible, carroceria, numeroPuertas);
+		// 3. Intentar configurar la placa
+		// Si la placa es null, se genera. Si ya existe, lanza excepción y el método
+		// muere aquí.
 		nuevoAuto.setPlaca(placa);
-		
-		
 
+		// 4. Si llegamos aquí, la placa es válida y única. Agregamos al arreglo.
 		this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
 		this.vehiculos[this.vehiculos.length - 1] = nuevoAuto;
+
+		System.out.println("Registro exitoso: " + nuevoAuto.getPlaca());
+		return nuevoAuto;
 	}
 
-	public void registrarMoto(String placa, String marca, String modelo, int year, float precio,
+	public Moto registrarMoto(String placa, String marca, String modelo, int year, float precio,
 			String tipoDeCombustible, String transmision, float kilometraje, String color, String estado,
-			float cilindraje, boolean disponible, String categoria) throws Exception {
+			float cilindraje, boolean disponible, String categoria)
+			throws EObjectNull, EObjectInvalido, EObjectExiste, EObjectVoid {
 
 		Utils.validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
 		String categoriaValidada = Utils.validarCategoria(categoria);
@@ -310,37 +311,33 @@ public class Concesionario {
 		String combustibleValidado = Utils.validarCombustible(tipoDeCombustible);
 		String estadoValidado = Utils.validarEstado(estado);
 
-		Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, combustibleValidado, transmisionValidada, kilometraje, color,
-				estadoValidado, cilindraje, disponible, categoriaValidada);
-
-		
+		Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, combustibleValidado, transmisionValidada,
+				kilometraje, color, estadoValidado, cilindraje, disponible, categoriaValidada);
 
 		nuevaMoto.setPlaca(placa);
 
 		this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
 		this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
+		return nuevaMoto;
 	}
 
-	
-	
 	public Vehiculo buscarVehiculos(String placa) {
-		
+
 		int i = 0;
-		
-		while(i < vehiculos.length && !vehiculos[i].getPlaca().equalsIgnoreCase(placa)) {
+
+		while (i < vehiculos.length && !vehiculos[i].getPlaca().equalsIgnoreCase(placa)) {
 			i++;
 		}
-		if(i == vehiculos.length) {
+		if (i == vehiculos.length) {
 			return null;
 		}
 		return vehiculos[i];
 	}
-	
-	
+
 	public int buscarVehiculosIndex(String placa) {
-		
+
 		int i = 0;
-		
+
 		while (i < vehiculos.length && !vehiculos[i].getPlaca().equalsIgnoreCase(placa)) {
 			i++;
 		}
@@ -350,7 +347,7 @@ public class Concesionario {
 		return i;
 
 	}
-	
+
 	public boolean eliminarVehiculo(String placa) {
 
 		int index = buscarVehiculosIndex(placa);
@@ -366,7 +363,7 @@ public class Concesionario {
 		vehiculos = nuevo;
 		return true;
 	}
-	
+
 	public Vehiculo[] listarVehiculos() {
 		return Arrays.copyOf(vehiculos, vehiculos.length);
 	}
