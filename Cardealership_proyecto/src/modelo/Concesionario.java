@@ -62,19 +62,23 @@ public class Concesionario {
 			throw new ValidacionException("El email no puede estar vacío.");
 		if (!email.contains("@") || !email.contains(".com"))
 			throw new ValidacionException("El email no tiene un formato válido.");
-		if (existeDocumento(numeroDocumento)) {
-  			  throw new EObjectExiste("El documento " + numeroDocumento + " ya está registrado");
-			}
+		
 
 		Cliente c = new Cliente(tipoDocumento, numeroDocumento, nombre, apellido, telefono, email);
 		clientes = Arrays.copyOf(clientes, clientes.length + 1);
 		clientes[clientes.length - 1] = c;
-		Utils.guardarObjeto(c);
+		Utils.guardarObjeto(c); // solo concesionario
+	}
+	
+	//añadí esto
+	public void agregarCliente(Cliente c) {
+	    clientes = Arrays.copyOf(clientes, clientes.length + 1);
+	    clientes[clientes.length - 1] = c;
 	}
 
 	public Cliente buscarCliente(String numeroDocumento) {
 		int i = 0;
-		while (i < clientes.length && !clientes[i].getId().equals(numeroDocumento)) {
+		while (i < clientes.length && !numeroDocumento.equals(clientes[i].getId())) {
 			i++;
 		}
 		if (i == clientes.length) {
@@ -85,7 +89,7 @@ public class Concesionario {
 
 	public int buscarClienteIndex(String numeroDocumento) {
 		int i = 0;
-		while (i < clientes.length && !clientes[i].getId().equals(numeroDocumento)) {
+		while (i < clientes.length && !numeroDocumento.equals(clientes[i].getId())) {
 			i++;
 		}
 		if (i == clientes.length) {
@@ -131,9 +135,7 @@ public class Concesionario {
 			throw new ValidacionException("El teléfono no puede estar vacío.");
 		if (salario < 0)
 			throw new ValidacionException("El salario no puede ser negativo.");
-		if (existeDocumento(numeroDocumento)) {
-    		throw new EObjectExiste("El documento " + numeroDocumento + " ya está registrado");
-			}
+		
 
 		Empleado e = new Empleado(tipoDocumento, numeroDocumento, nombre, apellido, telefono, salario);
 		empleados = Arrays.copyOf(empleados, empleados.length + 1);

@@ -1,17 +1,13 @@
 package modelo.persona;
+import java.io.Serializable;
 
-public abstract class Persona {
+public abstract class Persona implements Serializable{
 
     protected String tipoDocumento;
     protected String numeroDocumento;
     protected String nombre;
     protected String apellido;
     protected String telefono;
-    
-    
-    public Persona() {
-		super();
-	}
 
 	public Persona(String tipoDocumento, String numeroDocumento, String nombre, String apellido, String telefono) {
         this.tipoDocumento = tipoDocumento;
@@ -20,6 +16,9 @@ public abstract class Persona {
         this.apellido = apellido;
         this.telefono = telefono;
     }
+	
+	public Persona() {
+	}
 
     public String getTipoDocumento() {
         return tipoDocumento;

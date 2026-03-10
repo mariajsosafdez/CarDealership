@@ -1,9 +1,12 @@
 package modelo.vehiculo;
+
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.Arrays;
 import modelo.vehiculo.excepciones.*;
 
-public abstract class Vehiculo {
+
+public abstract class Vehiculo implements Serializable {
 
 	protected static final String LETRAS ="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //Usamos esto para manejar la codificacion de las placas
 	protected static final String NUMEROS = "0123456789"; // "		"

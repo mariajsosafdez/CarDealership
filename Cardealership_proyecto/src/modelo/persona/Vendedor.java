@@ -36,8 +36,11 @@ public class Vendedor extends Empleado implements Serializable {
     @Override
     public String toString() {
         return "Vendedor{" +
-                "nombre='" + nombre + '\'' +
+                "tipoDoc='" + tipoDocumento + '\'' +
+                ", numDoc='" + numeroDocumento + '\'' +
+                ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
+                ", telefono='" + telefono + '\'' +
                 ", salario=" + getSalario() +
                 ", vehiculosVendidos=" + vehiculosVendidos +
                 '}';

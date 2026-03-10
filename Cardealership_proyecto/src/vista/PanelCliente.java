@@ -10,14 +10,18 @@ import utils.Utils;
 
 public class PanelCliente extends JPanel {
 	private Concesionario concesionario;
-
+	
+	
+	//cree esto
 	private JTable tablaCuerpo;
-	private DefaultTableModel tabla = new DefaultTableModel() {
-		@Override
-		public boolean isCellEditable(int row, int column) {
-			return false;
-		}
-	};
+	private DefaultTableModel tabla = new DefaultTableModel(
+		    new Object[]{"Tipo Documento","Documento","Nombre","Apellido","Teléfono","Email"}, 0
+		) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
 
 	private JTextField txtDocumento = new JTextField(10);
 	private JTextField txtNombre = new JTextField(10);
@@ -39,10 +43,19 @@ public class PanelCliente extends JPanel {
 
 	// TODO CARGAR LOS CLIENTES DESDE EL FICHERO
 	public void cargarClientes() {
-		for (Cliente c : concesionario.listarClientes()) {
-			tabla.addRow(new Object[] { c.getTipoDocumento(), c.getId(), c.getNombre(), c.getApellido(),
-					c.getTelefono(), c.getEmail(), c });
-		}
+
+	    tabla.setRowCount(0);
+
+	    for (Cliente c : concesionario.listarClientes()) {
+	        tabla.addRow(new Object[]{
+	            c.getTipoDocumento(),
+	            c.getId(),
+	            c.getNombre(),
+	            c.getApellido(),
+	            c.getTelefono(),
+	            c.getEmail()
+	        });
+	    }
 	}
 
 	public PanelCliente(Concesionario concesionario) {
@@ -84,12 +97,12 @@ public class PanelCliente extends JPanel {
 
 		// TABLA
 
-		tabla.addColumn("Tipo Documento");
+		/*tabla.addColumn("Tipo Documento");
 		tabla.addColumn("Documento");
 		tabla.addColumn("Nombre");
 		tabla.addColumn("Apellido");
 		tabla.addColumn("Teléfono");
-		tabla.addColumn("Email");
+		tabla.addColumn("Email");*/
 
 		tablaCuerpo = new JTable(tabla);
 		JScrollPane scroll = new JScrollPane(tablaCuerpo);
@@ -146,7 +159,6 @@ public class PanelCliente extends JPanel {
 					concesionario.registrarCliente(tipoDoc, documento, nombre, apellido, telefono, email);
 					Cliente c = concesionario.buscarCliente(documento);
 					tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, email, c });
-					Utils.guardarObjeto(c);
 				} catch (ValidacionException ex) {
 					JOptionPane.showMessageDialog(this, ex.getMessage());
 				}
@@ -162,6 +174,8 @@ public class PanelCliente extends JPanel {
 				JOptionPane.showMessageDialog(this, "Complete todos los campos correctamente");
 			}
 		});
+		
+		cargarClientes();
 
 	}
 }

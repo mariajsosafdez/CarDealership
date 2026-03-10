@@ -9,6 +9,7 @@ import modelo.vehiculo.Vehiculo;
 
 public class Venta implements Serializable  {
 
+	private static final long serialVersionUID = 6;
     private String codigo;
     private Vehiculo[] vehiculos;
     private Cliente cliente;

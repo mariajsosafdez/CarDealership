@@ -2,6 +2,7 @@ package utils;
 import java.io.*;
 import java.util.Arrays;
 
+import modelo.Concesionario;
 import modelo.vehiculo.excepciones.EObjectExiste;
 import modelo.vehiculo.excepciones.EObjectInvalido;
 import modelo.vehiculo.excepciones.EObjectNull;
@@ -9,11 +10,12 @@ import modelo.vehiculo.excepciones.EObjectVoid;
 
 public class Utils {
 
-	public static final String baseDireccion = "src/utils/ficheros/";
+	public static final String baseDireccion = "ficheros/";
     
     // Guarda el objeto en su archivo correspondiente
     public static void guardarObjeto(Object objeto) {
     	
+    	System.out.println("Intentando guardar objeto...");
         String ruta = rutaObjeto(objeto);
         if (ruta == null) {
             System.out.println("Tipo no soportado");
@@ -22,6 +24,8 @@ public class Utils {
         
         //Crea la carpeta si no existe
         File archivo = new File(ruta);
+        
+        System.out.println("Guardando en: " + archivo.getAbsolutePath());
 
         if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) {
             archivo.getParentFile().mkdirs();
@@ -70,24 +74,25 @@ public class Utils {
 
         Object[] datos = leerObjetos(ruta);
 
-        int cont = 0;
-
-        for (int i = 0; i < datos.length; i++) {
-            if (!datos[i].toString().contains(identificador)) {
-                cont++;
-            }
-        }
-
-        Object[] nuevos = new Object[cont];
-
+        Object[] nuevos = new Object[datos.length];
         int j = 0;
 
         for (int i = 0; i < datos.length; i++) {
-            if (!datos[i].toString().contains(identificador)) {
-                nuevos[j] = datos[i];
-                j++;
+
+            if (datos[i] instanceof modelo.persona.Cliente) {
+
+                modelo.persona.Cliente c = (modelo.persona.Cliente) datos[i];
+
+                if (!identificador.equals(c.getId())) {
+                    nuevos[j++] = c;
+                }
+
+            } else {
+                nuevos[j++] = datos[i];
             }
         }
+
+        nuevos = Arrays.copyOf(nuevos, j);
 
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ruta))) {
             oos.writeObject(nuevos);
@@ -110,6 +115,7 @@ public class Utils {
                 return baseDireccion + "clientes.cli";
 
             case "empleado":
+            case "vendedor":
                 return baseDireccion + "empleados.emp";
 
             case "auto":
@@ -246,22 +252,7 @@ public class Utils {
 	        throw new EObjectInvalido("Estado inválido. Use: 'Nuevo' o 'Usado'");
 	    }
 			
-			public boolean existeDocumento(String numeroDocumento) {
-    
-    for (int i = 0; i < clientes.length; i++) {
-        if (clientes[i].getNumeroDocumento().equalsIgnoreCase(numeroDocumento)) {
-            return true;
-        }
-    }
-    
-    for (int i = 0; i < empleados.length; i++) {
-        if (empleados[i].getNumeroDocumento().equalsIgnoreCase(numeroDocumento)) {
-            return true;
-        }
-    }
-    
-    return false;
-	}
+			
     
     
     
@@ -274,4 +265,7 @@ public class Utils {
     
     
     
+    
+    
+	}	
 }

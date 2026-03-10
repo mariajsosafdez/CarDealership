@@ -3,10 +3,8 @@ package modelo.persona;
 import java.io.Serializable;
 
 public class Cliente extends Persona implements Serializable{
+	
 	private static final long serialVersionUID = 3;
-
-
-    
     private String email;
 
     
@@ -24,7 +22,7 @@ public class Cliente extends Persona implements Serializable{
         if (email == null || email.trim().isEmpty()) {
             throw new IllegalArgumentException("El email no puede estar vacío.");
         }
-        if (!email.contains("@")) {
+        if (!email.contains("@") || !email.contains(".com")) {
             throw new IllegalArgumentException("El email no tiene un formato válido.");
         }
         this.email = email;
@@ -32,6 +30,8 @@ public class Cliente extends Persona implements Serializable{
     @Override
     public String toString() {
         return "Cliente{" +
+        		"tipoDoc='" + tipoDocumento + '\'' +
+        		"numDoc='" + numeroDocumento + '\'' +
                 "nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", email='" + email + '\'' +

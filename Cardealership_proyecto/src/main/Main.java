@@ -17,23 +17,14 @@ public class Main {
 	public static void main(String[] args) {
 		Concesionario concesionario = new Concesionario("CarDelership");
 		
-		// Clientes
-	    Object[] clientesArchivo = Utils.leerObjetos(Utils.baseDireccion + "clientes.cli");
-	    for (int i = 0; i < clientesArchivo.length; i++) {
-	        Cliente c = (Cliente) clientesArchivo[i];
-	        try {
-	            concesionario.registrarCliente(
-	                c.getTipoDocumento(),
-	                c.getId(),
-	                c.getNombre(),
-	                c.getApellido(),
-	                c.getTelefono(),
-	                c.getEmail()
-	            );
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	    }
+		// Clientes - Es mucho más corto
+		
+		Object[] clientesArchivo = Utils.leerObjetos(Utils.baseDireccion + "clientes.cli");
+
+		for (int i = 0; i < clientesArchivo.length; i++) {
+		    Cliente c = (Cliente) clientesArchivo[i];
+		    concesionario.agregarCliente(c);
+		}
 
 	    // Empleado
 	    Object[] empleadosArchivo = Utils.leerObjetos(Utils.baseDireccion + "empleados.emp");
