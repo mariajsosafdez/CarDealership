@@ -2,12 +2,12 @@ package modelo.venta;
 
 import java.util.Date;
 import java.util.Arrays;
-
+import java.io.Serializable;
 import modelo.persona.Cliente;
 import modelo.persona.Vendedor;
 import modelo.vehiculo.Vehiculo;
 
-public class Venta {
+public class Venta implements Serializable {
 
     private String codigo;
     private Vehiculo[] vehiculos;
