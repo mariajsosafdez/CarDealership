@@ -49,16 +49,21 @@ public class Ventana extends JFrame {
 		
 		panelCentral.add(new PanelInicio(), "INICIO");
 		panelCentral.add(new PanelCliente(concesionario), "CLIENTES");
-		panelCentral.add(new PanelEmpleado(concesionario), "EMPLEADOS");
+		PanelEmpleado panelEmpleado = new PanelEmpleado(concesionario);
+		panelCentral.add(panelEmpleado, "EMPLEADOS");
 		panelCentral.add(new PanelVehiculo(concesionario), "VEHICULOS");
-		//panelCentral.add(crearPanelDummy("Gestión de Ventas"), "VENTAS");
+		PanelVenta panelVenta = new PanelVenta(concesionario, panelEmpleado);
+		panelCentral.add(panelVenta, "VENTAS");
 
 		add(panelCentral, BorderLayout.CENTER);
 		
 		btnClientes.addActionListener(e -> cardLayout.show(panelCentral, "CLIENTES"));
 		btnEmpleados.addActionListener(e -> cardLayout.show(panelCentral, "EMPLEADOS"));
 		btnVehiculos.addActionListener(e -> cardLayout.show(panelCentral, "VEHICULOS"));
-		btnVentas.addActionListener(e -> cardLayout.show(panelCentral, "VENTAS"));
+		btnVentas.addActionListener(e -> {
+			cardLayout.show(panelCentral, "VENTAS");
+			panelVenta.actualizarVehiculos();
+		});
 		
 		setVisible(true);
 	}

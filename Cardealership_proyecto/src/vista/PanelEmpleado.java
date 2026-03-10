@@ -51,6 +51,25 @@ public class PanelEmpleado extends JPanel {
 			}
 		}
 	}
+	//recargar vendedores
+	public void actualizarTabla() {
+
+	    tabla.setRowCount(0); // limpia la tabla
+
+	    for (Empleado e : concesionario.listarEmpleados()) {
+
+	        tabla.addRow(new Object[]{
+	        	e.getTipoDocumento(),
+	            e.getId(),
+	            e.getNombre(),
+	            e.getApellido(),
+	            e.getTelefono(),
+	            e.getSalario(),
+	            e instanceof Vendedor ? ((Vendedor) e).getVehiculosVendidos() : "NA"
+	        });
+
+	    }
+	}
 
 	public PanelEmpleado(Concesionario concesionario) {
 		this.concesionario = concesionario;
@@ -119,7 +138,7 @@ public class PanelEmpleado extends JPanel {
 		panelBorrar.add(btnEliminar, BorderLayout.SOUTH);
 
 		btnEliminar.addActionListener(e -> {
-			if (tablaCuerpo.getSelectedColumn() != -1) {
+			if (tablaCuerpo.getSelectedRow() != -1) {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
 				String documento = (String) tabla.getValueAt(filaEliminar, 1);
 				boolean estadoEliminar = concesionario
@@ -157,7 +176,7 @@ public class PanelEmpleado extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, "Ingrese un número válido");
+				JOptionPane.showMessageDialog(this, ex.getMessage());
 
 			}
 
@@ -173,8 +192,7 @@ public class PanelEmpleado extends JPanel {
 						Empleado v = concesionario.buscarEmpleado(documento);
 						tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, 0, v });
 					} catch (ValidacionException ex) {
-						ex.getMessage();
-						JOptionPane.showMessageDialog(this, "No se pudo registrar el vendedor");
+						JOptionPane.showMessageDialog(this, ex.getMessage());
 					}
 
 				} else {
@@ -185,13 +203,12 @@ public class PanelEmpleado extends JPanel {
 						tabla.addRow(
 								new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, "NA", em });
 					} catch (ValidacionException ex) {
-						ex.getMessage();
-						JOptionPane.showMessageDialog(this, "No se pudo registrar el empleado");
+						JOptionPane.showMessageDialog(this, ex.getMessage());
 					}
 
 				}
 
-				cbTipoDoc.setSelectedItem(" ");
+				cbTipoDoc.setSelectedIndex(0);
 				txtDocumento.setText("");
 				txtNombre.setText("");
 				txtApellido.setText("");

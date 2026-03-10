@@ -267,7 +267,7 @@ public class Utils {
 	    }
 	}
 	
-	public  static String validarEstado(String estado, float kilometraje) throws EObjectNull, EObjectInvalido{
+	public  static String validarEstado(String estado) throws EObjectNull, EObjectInvalido{
 	    if (estado == null || estado.trim().isEmpty()) {
 	        throw new EObjectNull("El estado no puede ser nulo");
 	    }
@@ -276,9 +276,6 @@ public class Utils {
 	            .replace("Á", "A").replace("É", "E").replace("Í", "I") 
 	            .replace("Ó", "O").replace("Ú", "U");
 	    
-	    if(limpio.equals("NUEVO") && kilometraje != 0) {
-	    	throw new EObjectInvalido("Un vehiculo nuevo debe tener kilometraje 0");
-	    }
 	    if (limpio.equals("NUEVO") || limpio.equals("USADO")) {
 	        return limpio;
 	    } else {

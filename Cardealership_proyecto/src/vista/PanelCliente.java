@@ -36,7 +36,7 @@ public class PanelCliente extends JPanel {
 	private final JPanel panelBorrar = new JPanel();
 	private final JButton btnEliminar = new JButton("Eliminar");
 
-	//TODO CARGAR LOS CLIENTES DESDE EL FICHERO
+	// TODO CARGAR LOS CLIENTES DESDE EL FICHERO
 	public void cargarClientes() {
 		for (Cliente c : concesionario.listarClientes()) {
 			tabla.addRow(new Object[] { c.getTipoDocumento(), c.getId(), c.getNombre(), c.getApellido(),
@@ -104,12 +104,12 @@ public class PanelCliente extends JPanel {
 
 		panelBorrar.add(btnEliminar, BorderLayout.SOUTH);
 		btnEliminar.addActionListener(e -> {
-			if (tablaCuerpo.getSelectedColumn() != -1) {
+			if (tablaCuerpo.getSelectedRow() != -1) {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
 				String documento = (String) tabla.getValueAt(filaEliminar, 1);
 				boolean estadoEliminar = concesionario
 						.eliminarCliente((concesionario.buscarCliente(documento)).getId());
-				//TODO ELIMINAR DEL FICHERO
+				// TODO ELIMINAR DEL FICHERO
 				if (estadoEliminar) {
 					// Buscar el cliente
 					tabla.removeRow(filaEliminar);
@@ -145,11 +145,10 @@ public class PanelCliente extends JPanel {
 					Cliente c = concesionario.buscarCliente(documento);
 					tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, email, c });
 				} catch (ValidacionException ex) {
-					ex.getMessage();
-					JOptionPane.showMessageDialog(this, "No se pudo registrar el cliente");
+					JOptionPane.showMessageDialog(this, ex.getMessage());
 				}
 
-				cbTipoDoc.setSelectedItem(" ");
+				cbTipoDoc.setSelectedIndex(0);
 				txtDocumento.setText("");
 				txtNombre.setText("");
 				txtApellido.setText("");

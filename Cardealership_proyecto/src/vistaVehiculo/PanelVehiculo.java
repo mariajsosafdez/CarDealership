@@ -110,7 +110,7 @@ public class PanelVehiculo extends JPanel {
 		JScrollPane scrollR = new JScrollPane(tablaCuerpoR);
 		panelInfo.add(scrollR);
 
-		// PANEL BORRAR
+		// PANEL LATERAL
 
 		add(panelBtn, BorderLayout.EAST);
 		panelBtn.setLayout(new BorderLayout(0, 0));
@@ -121,11 +121,11 @@ public class PanelVehiculo extends JPanel {
 		// ELIMINAR REGISTRO
 		btnEliminar.addActionListener(e -> {
 
-			if (tablaCuerpoL.getSelectedColumn() == -1 && tablaCuerpoR.getSelectedColumn() == -1) {
+			if (tablaCuerpoL.getSelectedRow() == -1 && tablaCuerpoR.getSelectedRow() == -1) {
 				JOptionPane.showMessageDialog(this, "Seleccione una fila a eliminar");
-			} else if (tablaCuerpoL.getSelectedColumn() != -1 && tablaCuerpoR.getSelectedColumn() == -1) {
+			} else if (tablaCuerpoL.getSelectedRow() != -1 && tablaCuerpoR.getSelectedRow() == -1) {
 				eliminarVehiculo(tablaCuerpoL, tablaL);
-			} else if (tablaCuerpoR.getSelectedColumn() != -1 && tablaCuerpoL.getSelectedColumn() == -1) {
+			} else if (tablaCuerpoR.getSelectedRow() != -1 && tablaCuerpoL.getSelectedRow() == -1) {
 				eliminarVehiculo(tablaCuerpoR, tablaR);
 			} else {
 				eliminarVehiculo(tablaCuerpoL, tablaL);
@@ -139,11 +139,11 @@ public class PanelVehiculo extends JPanel {
 		btnDetalle.addActionListener(e ->
 
 		{
-			if (tablaCuerpoL.getSelectedColumn() == -1 && tablaCuerpoR.getSelectedColumn() == -1) {
+			if (tablaCuerpoL.getSelectedRow() == -1 && tablaCuerpoR.getSelectedRow() == -1) {
 				JOptionPane.showMessageDialog(this, "Seleccione una vehiculo");
-			} else if (tablaCuerpoL.getSelectedColumn() != -1 && tablaCuerpoR.getSelectedColumn() == -1) {
+			} else if (tablaCuerpoL.getSelectedRow() != -1 && tablaCuerpoR.getSelectedRow() == -1) {
 				mostrarDetalles(tablaCuerpoL, tablaL);
-			} else if (tablaCuerpoR.getSelectedColumn() != -1 && tablaCuerpoL.getSelectedColumn() == -1) {
+			} else if (tablaCuerpoR.getSelectedRow() != -1 && tablaCuerpoL.getSelectedRow() == -1) {
 				mostrarDetalles(tablaCuerpoR, tablaR);
 			} else {
 				JOptionPane.showMessageDialog(this, "Solo seleccione un vehiculo a la vez");
@@ -168,8 +168,8 @@ public class PanelVehiculo extends JPanel {
 	}
 
 	public void mostrarDetalles(JTable tablaCuerpo, DefaultTableModel tabla) {
-		int filaEliminar = tablaCuerpo.getSelectedRow();
-		String placa = (String) tabla.getValueAt(filaEliminar, 0);
+		int filadetalle = tablaCuerpo.getSelectedRow();
+		String placa = (String) tabla.getValueAt(filadetalle, 0);
 		Vehiculo v = concesionario.buscarVehiculos(placa);
 		if (v != null) {
 			JOptionPane.showMessageDialog(this, v);
