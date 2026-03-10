@@ -15,6 +15,11 @@ public class Venta implements Serializable  {
     private Vendedor vendedor;
     private Date fecha;
     private float total;
+    
+    public Venta() {
+		super();
+	}
+
 
     public Venta(String codigo, Cliente cliente, Vendedor vendedor, Date fecha) {
 

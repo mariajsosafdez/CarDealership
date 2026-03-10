@@ -66,6 +66,7 @@ public class Concesionario {
 		Cliente c = new Cliente(tipoDocumento, numeroDocumento, nombre, apellido, telefono, email);
 		clientes = Arrays.copyOf(clientes, clientes.length + 1);
 		clientes[clientes.length - 1] = c;
+		Utils.guardarObjeto(c);
 	}
 
 	public Cliente buscarCliente(String numeroDocumento) {
@@ -131,6 +132,7 @@ public class Concesionario {
 		Empleado e = new Empleado(tipoDocumento, numeroDocumento, nombre, apellido, telefono, salario);
 		empleados = Arrays.copyOf(empleados, empleados.length + 1);
 		empleados[empleados.length - 1] = e;
+		Utils.guardarObjeto(e);
 	}
 
 	public void registrarVendedor(String tipoDocumento, String numeroDocumento, String nombre, String apellido,
@@ -153,6 +155,7 @@ public class Concesionario {
 		Vendedor v = new Vendedor(tipoDocumento, numeroDocumento, nombre, apellido, telefono, salario);
 		empleados = Arrays.copyOf(empleados, empleados.length + 1);
 		empleados[empleados.length - 1] = v;
+		Utils.guardarObjeto(v);
 	}
 
 	public Empleado buscarEmpleado(String numeroDocumento) {
@@ -224,6 +227,7 @@ public class Concesionario {
 
 		ventas = Arrays.copyOf(ventas, ventas.length + 1);
 		ventas[ventas.length - 1] = venta;
+		Utils.guardarObjeto(venta);
 		return venta;
 	}
 
@@ -301,6 +305,7 @@ public class Concesionario {
 		this.vehiculos[this.vehiculos.length - 1] = nuevoAuto;
 
 		System.out.println("Registro exitoso: " + nuevoAuto.getPlaca());
+		Utils.guardarObjeto(nuevoAuto);
 		return nuevoAuto;
 	}
 
@@ -322,6 +327,7 @@ public class Concesionario {
 
 		this.vehiculos = Arrays.copyOf(this.vehiculos, this.vehiculos.length + 1);
 		this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
+		Utils.guardarObjeto(nuevaMoto);
 		return nuevaMoto;
 	}
 
