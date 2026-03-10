@@ -62,6 +62,9 @@ public class Concesionario {
 			throw new ValidacionException("El email no puede estar vacío.");
 		if (!email.contains("@"))
 			throw new ValidacionException("El email no tiene un formato válido.");
+		if (existeDocumento(numeroDocumento)) {
+  			  throw new EObjectExiste("El documento " + numeroDocumento + " ya está registrado");
+			}
 
 		Cliente c = new Cliente(tipoDocumento, numeroDocumento, nombre, apellido, telefono, email);
 		clientes = Arrays.copyOf(clientes, clientes.length + 1);
@@ -127,6 +130,9 @@ public class Concesionario {
 			throw new ValidacionException("El teléfono no puede estar vacío.");
 		if (salario < 0)
 			throw new ValidacionException("El salario no puede ser negativo.");
+		if (existeDocumento(numeroDocumento)) {
+    		throw new EObjectExiste("El documento " + numeroDocumento + " ya está registrado");
+			}
 
 		Empleado e = new Empleado(tipoDocumento, numeroDocumento, nombre, apellido, telefono, salario);
 		empleados = Arrays.copyOf(empleados, empleados.length + 1);
