@@ -283,7 +283,7 @@ public class Concesionario {
 		String carroceriaValidada = Utils.validarCarroceria(carroceria);
 		String transmisionValidada = Utils.validarTransmision(transmision);
 		String combustibleValidado = Utils.validarCombustible(tipoDeCombustible);
-		String estadoValidado = Utils.validarEstado(estado);
+		String estadoValidado = Utils.validarEstado(estado, kilometraje);
 
 		if (numeroPuertas < 2 || numeroPuertas > 6) {
 			throw new EObjectInvalido("El numero de puertas " + numeroPuertas + "debe estar entre 2 y 6");
@@ -302,13 +302,13 @@ public class Concesionario {
 
 	public void registrarMoto(String placa, String marca, String modelo, int year, float precio,
 			String tipoDeCombustible, String transmision, float kilometraje, String color, String estado,
-			float cilindraje, boolean disponible, String categoria) throws Exception {
+			float cilindraje, boolean disponible, String categoria) throws EObjectNull, EObjectInvalido, EObjectVoid, EObjectExiste {
 
 		Utils.validarDatosGenerales(marca, modelo, year, precio, kilometraje, cilindraje);
 		String categoriaValidada = Utils.validarCategoria(categoria);
 		String transmisionValidada = Utils.validarTransmision(transmision);
 		String combustibleValidado = Utils.validarCombustible(tipoDeCombustible);
-		String estadoValidado = Utils.validarEstado(estado);
+		String estadoValidado = Utils.validarEstado(estado, kilometraje);
 
 		Moto nuevaMoto = new Moto(null, marca, modelo, year, precio, combustibleValidado, transmisionValidada, kilometraje, color,
 				estadoValidado, cilindraje, disponible, categoriaValidada);

@@ -27,7 +27,6 @@ public class FormMoto extends JPanel {
 	private JTextField txtKilometraje;
 	private JTextField txtColor;
 	private JTextField txtCilindraje;
-	private JTextField txtCategoria;
 
 	// TODO CARGAR LOS VEHICULOS DESDE EL FICHERO
 		public void cargarAutos() {
@@ -40,6 +39,8 @@ public class FormMoto extends JPanel {
 		}
 		
 	public FormMoto(Concesionario concesionario, DefaultTableModel tablaR) {
+		this.concesionario = concesionario;
+
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel fila2 = new JPanel();
@@ -51,6 +52,7 @@ public class FormMoto extends JPanel {
 		String[] transmisiones = { " ","MANUAL", "AUTOMATICA", "CVT", "DOBLE EMBRAGUE", "MANUAL AUTOMATIZADA", "SECUENCIAL",
 				"ELECTRONICA VARIABLE" };
 		String[] estados = { " ","Nuevo", "Usado" };
+		String[] categorias = {" ", "SCOOTER","SPORT","NAKED","ENDURO","TOURING","CRUISER","CROSS"};
 
 		JPanel fila1 = new JPanel();
 		add(fila1, BorderLayout.CENTER);
@@ -111,10 +113,10 @@ public class FormMoto extends JPanel {
 		txtCilindraje = new JTextField();
 		fila1.add(txtCilindraje);
 
-		JLabel lblCateogoria = new JLabel("Categoria");
-		fila1.add(lblCateogoria);
-		txtCategoria = new JTextField();
-		fila1.add(txtCategoria);
+		JLabel lblCategoria = new JLabel("Categoria");
+		fila1.add(lblCategoria);
+		JComboBox tipoCategoria = new JComboBox(categorias);
+		fila1.add(tipoCategoria);
 
 		// REGISTRAR MOTO
 		btnRegistrar.addActionListener(e -> {
@@ -130,7 +132,7 @@ public class FormMoto extends JPanel {
 			String color = txtColor.getText();
 			String estado = (String) tipoEstado.getSelectedItem();
 			float cilindraje = -1;
-			String categoria = txtCategoria.getText();
+			String categoria = (String) tipoCategoria.getSelectedItem();
 			
 			try {
 
@@ -173,27 +175,27 @@ public class FormMoto extends JPanel {
 					&& !transmision.isBlank() && kilometraje >= 0 && !color.isBlank() && !estado.isBlank() && cilindraje >= 0 && !categoria.isBlank()) {
 
 
-//				try {
-//					concesionario.registrarMoto(placa, marca, modelo, año, precio, (String) tipoCombustible.getSelectedItem(), (String) tipoTransmision.getSelectedItem(), kilometraje, color, (String) tipoEstado.getSelectedItem(), cilindraje, true, categoria);
-//					// Vehiculo a = new concesionario.buscarVehiculo(placa);
-//					tablaR.addRow(new Object[] { placa, marca, modelo, año, precio, /* m */ });
-//				} catch (EObjectNull | EObjectInvalido | EObjectVoid | EObjectExiste ex) {
-//					JOptionPane.showMessageDialog(this, "No se pudo registrar el Auto");
-//					ex.getMessage();
-//				}
+				try {
+					concesionario.registrarMoto(placa, marca, modelo, año, precio, (String) tipoCombustible.getSelectedItem(), (String) tipoTransmision.getSelectedItem(), kilometraje, color, (String) tipoEstado.getSelectedItem(), cilindraje, true, categoria);
+					Vehiculo m = concesionario.buscarVehiculos(placa);
+					tablaR.addRow(new Object[] { placa, marca, modelo, año, precio, m });
+				} catch (EObjectNull | EObjectInvalido | EObjectVoid | EObjectExiste ex) {
+					JOptionPane.showMessageDialog(this, "No se pudo registrar el Auto");
+					ex.getMessage();
+				}
 
 				txtPlaca.setText("");
 				txtMarca.setText("");
 				txtModelo.setText("");
 				txtAño.setText("");
 				txtPrecio.setText("");
-				tipoCombustible.setSelectedItem(0);
+				tipoCombustible.setSelectedIndex(0);
 				tipoTransmision.setSelectedIndex(0);
 				txtKilometraje.setText("");
 				txtColor.setText("");
 				tipoEstado.setSelectedIndex(0);
 				txtCilindraje.setText("");
-				txtCategoria.setText("");
+				tipoCategoria.setSelectedIndex(0);
 
 			} else {
 				JOptionPane.showMessageDialog(this, "Complete todos los campos");

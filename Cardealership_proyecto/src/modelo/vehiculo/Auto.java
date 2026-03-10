@@ -27,12 +27,22 @@ public class Auto extends Vehiculo {
 	
 	@Override
 	public String toString() {
-		return "Auto [numeroPuertas=" + numeroPuertas + ", carroceria=" + carroceria + ", Placa()=" + getPlaca()
-				+ ", Marca()=" + getMarca() + ", Modelo()=" + getModelo() + ", Year()=" + getYear()
-				+ ", Precio()=" + getPrecio() + ", TipoDeCombustible()=" + getTipoDeCombustible()
-				+ ", Transmision()=" + getTransmision() + ", Kilometraje()=" + getKilometraje() + ", Color()="
-				+ getColor() + ",	()=" + getEstado() + ", Cilindraje()=" + getCilindraje()
-				+ ", isDisponible()=" + isDisponible() + "]";
+
+	    return "\n CARRO" +
+	           "\nPlaca: " + getPlaca() +
+	           "\nMarca: " + getMarca() +
+	           "\nModelo: " + getModelo() +
+	           "\nAño: " + getYear() +
+	           "\nPrecio: $" + getPrecio() +
+	           "\nCarrocería: " + carroceria +
+	           "\nPuertas: " + numeroPuertas +
+	           "\nCombustible: " + getTipoDeCombustible() +
+	           "\nTransmisión: " + getTransmision() +
+	           "\nKilometraje: " + getKilometraje() + " km" +
+	           "\nColor: " + getColor() +
+	           "\nCilindraje: " + getCilindraje() +
+	           "\nEstado: " + getEstado() +
+	           "\nDisponible: " + (isDisponible() ? "Sí" : "No");
 	}
 
 

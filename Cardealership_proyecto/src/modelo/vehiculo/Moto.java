@@ -61,11 +61,21 @@ public class Moto extends Vehiculo{
 
 	@Override
 	public String toString() {
-		return "Moto [categoria=" + categoria + ",	Placa()=" + getPlaca() + ", Marca()=" + getMarca()
-				+ ", Modelo()=" + getModelo() + ", Year()=" + getYear() + ", Precio()=" + getPrecio()
-				+ ", TipoDeCombustible()=" + getTipoDeCombustible() + ", Transmision()=" + getTransmision()
-				+ ", Kilometraje()=" + getKilometraje() + ", Color()=" + getColor() + ", Estado()="
-				+ getEstado() + ", Cilindraje()=" + getCilindraje() + ", Disponible()=" + isDisponible() + "]";
+
+	    return "\nMOTO" +
+	           "\nPlaca: " + getPlaca() +
+	           "\nMarca: " + getMarca() +
+	           "\nModelo: " + getModelo() +
+	           "\nAño: " + getYear() +
+	           "\nPrecio: $" + getPrecio() +
+	           "\nCategoría: " + categoria +
+	           "\nCilindraje: " + getCilindraje() +
+	           "\nCombustible: " + getTipoDeCombustible() +
+	           "\nTransmisión: " + getTransmision() +
+	           "\nKilometraje: " + getKilometraje() + " km" +
+	           "\nColor: " + getColor() +
+	           "\nEstado: " + getEstado() +
+	           "\nDisponible: " + (isDisponible() ? "Sí" : "No");
 	}
 	
 	

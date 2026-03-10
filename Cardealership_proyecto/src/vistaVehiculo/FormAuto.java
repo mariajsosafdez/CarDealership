@@ -31,7 +31,6 @@ public class FormAuto extends JPanel {
 	private JTextField txtColor;
 	private JTextField txtCilindraje;
 	private JTextField txtNumeroPuertas;
-	private JTextField txtCarroceria;
 
 	// TODO CARGAR LOS VEHICULOS DESDE EL FICHERO
 	public void cargarAutos() {
@@ -44,7 +43,8 @@ public class FormAuto extends JPanel {
 	}
 
 	public FormAuto(Concesionario concesionario, DefaultTableModel tablaL) {
-
+		this.concesionario = concesionario;
+		
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel fila2 = new JPanel();
@@ -56,7 +56,8 @@ public class FormAuto extends JPanel {
 		String[] transmisiones = { " ", "MANUAL", "AUTOMATICA", "CVT", "DOBLE EMBRAGUE", "MANUAL AUTOMATIZADA",
 				"SECUENCIAL", "ELECTRONICA VARIABLE" };
 		String[] estados = { " ", "Nuevo", "Usado" };
-
+		String[] carrocerias = {" ","SEDAN","HATCHBACK","SUV","PICKUP","COUPE","CONVERTIBLE","FURGON"};
+		
 		JPanel fila1 = new JPanel();
 		add(fila1, BorderLayout.CENTER);
 		fila1.setLayout(new GridLayout(0, 4, 5, 5));
@@ -123,8 +124,8 @@ public class FormAuto extends JPanel {
 
 		JLabel lblCarroceria = new JLabel("Carrocería");
 		fila1.add(lblCarroceria);
-		txtCarroceria = new JTextField();
-		fila1.add(txtCarroceria);
+		JComboBox tipoCarroceria = new JComboBox(carrocerias);
+		fila1.add(tipoCarroceria);
 
 		// REGISTRAR AUTO
 		btnRegistrar.addActionListener(e -> {
@@ -141,7 +142,7 @@ public class FormAuto extends JPanel {
 			String estado = (String) tipoEstado.getSelectedItem();
 			float cilindraje = -1;
 			int numeroPuertas = 0;
-			String carroceria = txtCarroceria.getText();
+			String carroceria = (String) tipoCarroceria.getSelectedItem();
 
 			try {
 
@@ -194,8 +195,8 @@ public class FormAuto extends JPanel {
 							(String) tipoCombustible.getSelectedItem(), (String) tipoTransmision.getSelectedItem(),
 							kilometraje, color, (String) tipoEstado.getSelectedItem(), cilindraje, true, carroceria,
 							numeroPuertas);
-					// Vehiculo a = new concesionario.buscarVehiculo(placa);
-					tablaL.addRow(new Object[] { placa, marca, modelo, año, precio, /* m */ });
+					Vehiculo a = concesionario.buscarVehiculos(placa);
+					tablaL.addRow(new Object[] { a.getPlaca(), marca, modelo, año, precio, a });
 				} catch (EObjectNull | EObjectInvalido | EObjectVoid | EObjectExiste ex) {
 					JOptionPane.showMessageDialog(this, "No se pudo registrar el Auto");
 					ex.getMessage();
@@ -206,14 +207,14 @@ public class FormAuto extends JPanel {
 				txtModelo.setText("");
 				txtAño.setText("");
 				txtPrecio.setText("");
-				tipoCombustible.setSelectedItem(0);
+				tipoCombustible.setSelectedIndex(0);
 				tipoTransmision.setSelectedIndex(0);
 				txtKilometraje.setText("");
 				txtColor.setText("");
 				tipoEstado.setSelectedIndex(0);
 				txtCilindraje.setText("");
 				txtNumeroPuertas.setText("");
-				txtCarroceria.setText("");
+				tipoCarroceria.setSelectedIndex(0);
 
 			} else {
 				JOptionPane.showMessageDialog(this, "Complete todos los campos");

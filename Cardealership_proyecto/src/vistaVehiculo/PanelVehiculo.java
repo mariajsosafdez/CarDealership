@@ -46,7 +46,8 @@ public class PanelVehiculo extends JPanel {
 	private final JLabel lbltipos = new JLabel("Seleccione el vehiculo a registrar");
 
 	public PanelVehiculo(Concesionario concesionario) {
-
+		this.concesionario = concesionario;
+		
 		setLayout(new BorderLayout(10, 10));
 		setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -119,57 +120,62 @@ public class PanelVehiculo extends JPanel {
 
 		// ELIMINAR REGISTRO
 		btnEliminar.addActionListener(e -> {
-			
+
 			if (tablaCuerpoL.getSelectedColumn() == -1 && tablaCuerpoR.getSelectedColumn() == -1) {
 				JOptionPane.showMessageDialog(this, "Seleccione una fila a eliminar");
-			} else if(tablaCuerpoL.getSelectedColumn() != -1){
-				
-			}
-			
-			
-			
-			
-			
-			// :P
-			if (tablaCuerpoL.getSelectedColumn() == -1 && tablaCuerpoR.getSelectedColumn() == -1) {
-				JOptionPane.showMessageDialog(this, "Seleccione una fila a eliminar");
+			} else if (tablaCuerpoL.getSelectedColumn() != -1 && tablaCuerpoR.getSelectedColumn() == -1) {
+				eliminarVehiculo(tablaCuerpoL, tablaL);
+			} else if (tablaCuerpoR.getSelectedColumn() != -1 && tablaCuerpoL.getSelectedColumn() == -1) {
+				eliminarVehiculo(tablaCuerpoR, tablaR);
 			} else {
-				if (tablaCuerpoL.getSelectedColumn() != -1) {
-					int filaEliminar = tablaCuerpoL.getSelectedRow();
-					String placa = (String) tablaL.getValueAt(filaEliminar, 0);
-					boolean estadoEliminar = true; // concesionario.eliminarVehiculo((concesionario.buscarVehiculo(placa)));
-					// TODO ELIMINAR DEL FICHERO
-					if (estadoEliminar) {
-						tablaL.removeRow(filaEliminar);
-						JOptionPane.showMessageDialog(this, "Cliente eliminado correctamente");
-					} else {
-						JOptionPane.showMessageDialog(this, "Cliente no encontrado en el sistema");
-					}
-				} else {
-					JOptionPane.showMessageDialog(this, "Seleccione una fila a eliminar");
-				}
-				if (tablaCuerpoR.getSelectedColumn() != -1) {
-					int filaEliminar = tablaCuerpoR.getSelectedRow();
-					String placa = (String) tablaR.getValueAt(filaEliminar, 0);
-					boolean estadoEliminar = true; // concesionario.eliminarVehiculo((concesionario.buscarVehiculo(placa)));
-					// TODO ELIMINAR DEL FICHERO
-					if (estadoEliminar) {
-						tablaR.removeRow(filaEliminar);
-						JOptionPane.showMessageDialog(this, "Vehiculo eliminado correctamente");
-					} else {
-						JOptionPane.showMessageDialog(this, "Vehiculo no encontrado en el sistema");
-					}
-				} else {
-					JOptionPane.showMessageDialog(this, "Seleccione una fila a eliminar");
-				}
+				eliminarVehiculo(tablaCuerpoL, tablaL);
+				eliminarVehiculo(tablaCuerpoR, tablaR);
+			}
+
+			tablaCuerpoL.clearSelection();
+			tablaCuerpoR.clearSelection();
+		});
+		// DETALLE VEHICULO
+		btnDetalle.addActionListener(e ->
+
+		{
+			if (tablaCuerpoL.getSelectedColumn() == -1 && tablaCuerpoR.getSelectedColumn() == -1) {
+				JOptionPane.showMessageDialog(this, "Seleccione una vehiculo");
+			} else if (tablaCuerpoL.getSelectedColumn() != -1 && tablaCuerpoR.getSelectedColumn() == -1) {
+				mostrarDetalles(tablaCuerpoL, tablaL);
+			} else if (tablaCuerpoR.getSelectedColumn() != -1 && tablaCuerpoL.getSelectedColumn() == -1) {
+				mostrarDetalles(tablaCuerpoR, tablaR);
+			} else {
+				JOptionPane.showMessageDialog(this, "Solo seleccione un vehiculo a la vez");
 				tablaCuerpoL.clearSelection();
 				tablaCuerpoR.clearSelection();
 			}
 		});
-		// DETALLE VEHICULO
-		btnDetalle.addActionListener(e -> {
 
-		});
+	}
 
+	public void eliminarVehiculo(JTable tablaCuerpo, DefaultTableModel tabla) {
+		int filaEliminar = tablaCuerpo.getSelectedRow();
+		String placa = (String) tabla.getValueAt(filaEliminar, 0);
+		boolean estadoEliminar = concesionario.eliminarVehiculo((concesionario.buscarVehiculos(placa)).getPlaca());
+		// TODO ELIMINAR DEL FICHERO
+		if (estadoEliminar) {
+			tabla.removeRow(filaEliminar);
+			JOptionPane.showMessageDialog(this, "Vehiculo eliminado correctamente");
+		} else {
+			JOptionPane.showMessageDialog(this, "Vehiculo no encontrado en el sistema");
+		}
+	}
+
+	public void mostrarDetalles(JTable tablaCuerpo, DefaultTableModel tabla) {
+		int filaEliminar = tablaCuerpo.getSelectedRow();
+		String placa = (String) tabla.getValueAt(filaEliminar, 0);
+		Vehiculo v = concesionario.buscarVehiculos(placa);
+		if (v != null) {
+			JOptionPane.showMessageDialog(this, v);
+		} else {
+			JOptionPane.showMessageDialog(this, "Vehiculo no encontrado en el sistema");
+		}
+		tablaCuerpo.clearSelection();
 	}
 }
