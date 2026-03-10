@@ -245,6 +245,22 @@ public class Utils {
 	    } else {
 	        throw new EObjectInvalido("Estado inválido. Use: 'Nuevo' o 'Usado'");
 	    }
+			
+			public boolean existeDocumento(String numeroDocumento) {
+    
+    for (int i = 0; i < clientes.length; i++) {
+        if (clientes[i].getNumeroDocumento().equalsIgnoreCase(numeroDocumento)) {
+            return true;
+        }
+    }
+    
+    for (int i = 0; i < empleados.length; i++) {
+        if (empleados[i].getNumeroDocumento().equalsIgnoreCase(numeroDocumento)) {
+            return true;
+        }
+    }
+    
+    return false;
 	}
     
     
