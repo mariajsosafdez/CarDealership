@@ -1,9 +1,12 @@
 package modelo.persona;
 
 
+import java.io.Serializable;
+
 import modelo.venta.Venta;
 
-public class Vendedor extends Empleado {
+public class Vendedor extends Empleado implements Serializable {
+	private static final long serialVersionUID = 5;
 
     private int vehiculosVendidos;
 

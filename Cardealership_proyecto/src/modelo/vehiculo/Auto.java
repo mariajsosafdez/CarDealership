@@ -1,6 +1,8 @@
 package modelo.vehiculo;
 
 
+import java.io.Serializable;
+
 import modelo.Concesionario;
 import modelo.vehiculo.excepciones.EObjectExiste;
 
@@ -10,7 +12,8 @@ import modelo.vehiculo.excepciones.EObjectVoid;
 import utils.Utils;
 import vista.Ventana;
 
-public class Auto extends Vehiculo {
+public class Auto extends Vehiculo implements Serializable{
+	private static final long serialVersionUID = 1;
 
 	private int numeroPuertas;
 	private String carroceria;

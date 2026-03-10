@@ -23,6 +23,11 @@ public abstract class Vehiculo {
 	protected float cilindraje; //
 	protected boolean disponible; //
 	
+	public Vehiculo() {
+		super();
+	}
+
+	
 	
 	public Vehiculo(String placa, String marca, String modelo, int year, float precio, String tipoDeCombustible,
 			String transmision, float kilometraje,  String color, String estado, float cilindraje, boolean disponible)  {

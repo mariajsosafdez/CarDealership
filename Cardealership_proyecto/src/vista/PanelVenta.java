@@ -23,6 +23,7 @@ import modelo.persona.Vendedor;
 import modelo.vehiculo.Vehiculo;
 import modelo.venta.InvalidVentaException;
 import modelo.venta.Venta;
+import utils.Utils;
 
 public class PanelVenta extends JPanel {
 
@@ -50,6 +51,10 @@ public class PanelVenta extends JPanel {
 	private final JButton btnEliminar = new JButton("Eliminar");
 	private final JButton btnDetalle = new JButton("Detalle");
 	private final JButton btnAgregar = new JButton("Agregar \nVehiculo");
+	private Venta ventaActual = null;
+	private JLabel lblMetodoPago = new JLabel("Método de pago:");
+	private JComboBox<String> cbMetodoPago =
+	        new JComboBox<>(new String[]{"Efectivo","Tarjeta","Transferencia","Financiado"});
 
 	// TODO CARGAR LAS VENTAS DESDE EL FICHERO
 	public void cargarVentas() {
@@ -96,6 +101,8 @@ public class PanelVenta extends JPanel {
 		fila1.add(txtVendedor);
 		fila2.add(lblVehiculo);
 		fila2.add(cbVehiculos);
+		fila2.add(lblMetodoPago);
+		fila2.add(cbMetodoPago);
 
 		fila3.add(btnRegistrar);
 		Formulario.setLayout(new GridLayout(0, 1, 0, 0));
@@ -111,6 +118,7 @@ public class PanelVenta extends JPanel {
 		tabla.addColumn("Cliente");
 		tabla.addColumn("Vendedor");
 		tabla.addColumn("Total");
+		
 
 		tablaCuerpo = new JTable(tabla);
 		JScrollPane scroll = new JScrollPane(tablaCuerpo);
@@ -132,16 +140,15 @@ public class PanelVenta extends JPanel {
 		btnEliminar.addActionListener(e -> {
 			if (tablaCuerpo.getSelectedRow() != -1) {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
-				String documento = (String) tabla.getValueAt(filaEliminar, 1);
-				boolean estadoEliminar = concesionario
-						.eliminarCliente((concesionario.buscarCliente(documento)).getId());
+				String codigo = (String) tabla.getValueAt(filaEliminar, 0);
+				boolean estadoEliminar = concesionario.eliminarVenta(codigo);
 				// TODO ELIMINAR DEL FICHERO
 				if (estadoEliminar) {
-					// Buscar el cliente
 					tabla.removeRow(filaEliminar);
-					JOptionPane.showMessageDialog(this, "Cliente eliminado correctamente");
+					Utils.eliminarObjeto("venta", codigo);
+					JOptionPane.showMessageDialog(this, "Venta eliminada correctamente");
 				} else {
-					JOptionPane.showMessageDialog(this, "Cliente no encontrado en el sistema");
+					JOptionPane.showMessageDialog(this, "Venta no encontrada en el sistema");
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Seleccione una fila a eliminar");
@@ -168,45 +175,85 @@ public class PanelVenta extends JPanel {
 			}
 			tablaCuerpo.clearSelection();
 		});
+		//Añadir vehiculo
+		btnAgregar.addActionListener(e -> {
+
+		    if (ventaActual == null) {
+		        JOptionPane.showMessageDialog(this, "Primero debe registrar una venta.");
+		        return;
+		    }
+
+		    String tipoVehiculo = (String) cbVehiculos.getSelectedItem();
+
+		    if (tipoVehiculo == null) {
+		        JOptionPane.showMessageDialog(this, "Seleccione un vehículo");
+		        return;
+		    }
+
+		    String placa = tipoVehiculo.split(" ")[0];
+
+		    Vehiculo v = concesionario.buscarVehiculos(placa);
+
+		    try {
+
+		        ventaActual.agregarVehiculo(v);
+
+		        JOptionPane.showMessageDialog(this,
+		                "Vehículo agregado a la venta\nTotal actual: $" + ventaActual.getTotal());
+
+		        // actualizar tabla
+		        int fila = tablaCuerpo.getRowCount() - 1;
+
+		        tabla.setValueAt(ventaActual.getTotal(), fila, 4);
+
+		    } catch (InvalidVentaException ex) {
+
+		        JOptionPane.showMessageDialog(this, ex.getMessage());
+
+		    }
+		});
 
 		// REGISTRO DE VENTAS
 
 		btnRegistrar.addActionListener(e -> {
 
-			String tipoVehiculo = (String) cbVehiculos.getSelectedItem();
-			String placa = tipoVehiculo.split(" ")[0];
-			String clienteDoc = txtCliente.getText();
-			String vendedorDoc = txtVendedor.getText();
+		    String tipoVehiculo = (String) cbVehiculos.getSelectedItem();
+		    String placa = tipoVehiculo.split(" ")[0];
+		    String clienteDoc = txtCliente.getText();
+		    String vendedorDoc = txtVendedor.getText();
+		    String metodoPago = (String) cbMetodoPago.getSelectedItem();
 
-			if (!placa.isBlank() && !clienteDoc.isBlank() && !vendedorDoc.isBlank()
-					&& concesionario.buscarEmpleado(vendedorDoc) instanceof Vendedor) {
+		    if (!placa.isBlank() && !clienteDoc.isBlank() && !vendedorDoc.isBlank()
+		            && concesionario.buscarEmpleado(vendedorDoc) instanceof Vendedor) {
 
-				// TODO RESOLVER LO DEL TRYCATCH
-				// TODO AÑADIR AL FICHERO
-				try {
-					Venta v = concesionario.venderVehiculo(concesionario.buscarVehiculos(placa),
-							concesionario.buscarCliente(clienteDoc),
-							(Vendedor) concesionario.buscarEmpleado(vendedorDoc));
+		        try {
 
-					v.getVendedor().registrarVenta(v);
+		            ventaActual = concesionario.venderVehiculo(
+		                    concesionario.buscarVehiculos(placa),
+		                    concesionario.buscarCliente(clienteDoc),
+		                    (Vendedor) concesionario.buscarEmpleado(vendedorDoc)
+		            );
 
-					panelEmpleado.actualizarTabla();
+		            Utils.guardarObjeto(ventaActual);
+		            ventaActual.getVendedor().registrarVenta(ventaActual);
 
-					tabla.addRow(new Object[] { v.getCodigo(), v.getFecha(), v.getCliente().getId(), v.getVendedor().getId(),
-							v.getTotal(), v });
-				} catch (InvalidVentaException ex) {
-					JOptionPane.showMessageDialog(this, ex.getMessage());
-				} catch (ValidacionException ex) {
-					JOptionPane.showMessageDialog(this, ex.getMessage());
-				}
+		            panelEmpleado.actualizarTabla();
 
-				cbVehiculos.setSelectedIndex(0);
-				txtCliente.setText("");
-				txtVendedor.setText("");
+		            tabla.addRow(new Object[]{
+		                    ventaActual.getCodigo(),
+		                    ventaActual.getFecha(),
+		                    ventaActual.getCliente().getId(),
+		                    ventaActual.getVendedor().getId(),
+		                    ventaActual.getTotal(),
+		                    metodoPago
+		            });
+		        } catch (Exception ex) {
+		            JOptionPane.showMessageDialog(this, ex.getMessage());
+		        }
 
-			} else {
-				JOptionPane.showMessageDialog(this, "Complete todos los campos correctamente");
-			}
+		    } else {
+		        JOptionPane.showMessageDialog(this, "Complete todos los campos correctamente");
+		    }
 		});
 
 	}

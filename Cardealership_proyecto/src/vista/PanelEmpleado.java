@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 
 import modelo.*;
 import modelo.persona.*;
+import utils.Utils;
 
 public class PanelEmpleado extends JPanel {
 	private Concesionario concesionario;
@@ -148,6 +149,7 @@ public class PanelEmpleado extends JPanel {
 				if (estadoEliminar) {
 					// Buscar el empleado
 					tabla.removeRow(filaEliminar);
+					Utils.eliminarObjeto("empleado", documento);
 					JOptionPane.showMessageDialog(this, "Empleado eliminado correctamente");
 				} else {
 					JOptionPane.showMessageDialog(this, "Empleado no encontrado en el sistema");
@@ -191,6 +193,7 @@ public class PanelEmpleado extends JPanel {
 						concesionario.registrarVendedor(tipoDoc, documento, nombre, apellido, telefono, salario);
 						Empleado v = concesionario.buscarEmpleado(documento);
 						tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, 0, v });
+						Utils.guardarObjeto(v);
 					} catch (ValidacionException ex) {
 						JOptionPane.showMessageDialog(this, ex.getMessage());
 					}
@@ -202,6 +205,7 @@ public class PanelEmpleado extends JPanel {
 						Empleado em = concesionario.buscarEmpleado(documento);
 						tabla.addRow(
 								new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, "NA", em });
+						Utils.guardarObjeto(em);
 					} catch (ValidacionException ex) {
 						JOptionPane.showMessageDialog(this, ex.getMessage());
 					}
