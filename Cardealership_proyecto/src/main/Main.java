@@ -138,6 +138,11 @@ public class Main {
 	        Venta v = (Venta) ventasArchivo[i];
 	        concesionario.agregarVenta(v);
 	    }
+	    SwingUtilities.invokeLater(() -> {
+	        new Ventana(concesionario);
+	    });
 	}
+	
+	
 
 }
