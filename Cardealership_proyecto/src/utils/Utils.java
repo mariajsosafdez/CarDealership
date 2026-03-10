@@ -9,139 +9,99 @@ import modelo.vehiculo.excepciones.EObjectVoid;
 
 public class Utils {
 
-    public static final String baseDireccion = "src/ficheros/";
-
-  
+	public static final String baseDireccion = "src/utils/ficheros/";
+    
+    // Guarda el objeto en su archivo correspondiente
     public static void guardarObjeto(Object objeto) {
-
+    	
         String ruta = rutaObjeto(objeto);
-
         if (ruta == null) {
             System.out.println("Tipo no soportado");
             return;
         }
+        
+        //Crea la carpeta si no existe
+        File archivo = new File(ruta);
 
-        try {
+        if (archivo.getParentFile() != null && !archivo.getParentFile().exists()) {
+            archivo.getParentFile().mkdirs();
+        }
+        
+        // Lee los objetos existentes (si los hay)
+        Object[] existentes = leerObjetos(ruta);
 
-            FileWriter writer = new FileWriter(ruta, true);
-            writer.write(objeto.toString() + "\n");
-            writer.close();
+        Object[] nuevoArray = new Object[existentes.length + 1];
 
+        for (int i = 0; i < existentes.length; i++) {
+            nuevoArray[i] = existentes[i];
+        }
+        
+        // Agrega un nuevo objeto
+        nuevoArray[existentes.length] = objeto;
+        
+        // Guarda todo en un array
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ruta))) {
+            oos.writeObject(nuevoArray);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
+    // Lee los objetos del archivo
+    public static Object[] leerObjetos(String ruta) {
 
-    public static String[] leerObjeto(String tipo) {
+        File archivo = new File(ruta);
 
-        String ruta = rutaTipoObjeto(tipo);
-
-        String datos[] = new String[0];
-
-        try {
-
-            BufferedReader reader = new BufferedReader(new FileReader(ruta));
-
-            String linea;
-
-            while ((linea = reader.readLine()) != null) {
-
-                String nuevo[] = new String[datos.length + 1];
-
-                int i = 0;
-
-                while (i < datos.length) {
-                    nuevo[i] = datos[i];
-                    i++;
-                }
-
-                nuevo[datos.length] = linea;
-
-                datos = nuevo;
-            }
-
-            reader.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!archivo.exists() || archivo.length() == 0) {
+            return new Object[0];
         }
 
-        return datos;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+            return (Object[]) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return new Object[0];
+        }
     }
     
-
+    // Elimina los objeto por identificador (ID, placa, etc...)
     public static void eliminarObjeto(String tipo, String identificador) {
 
         String ruta = rutaTipoObjeto(tipo);
 
-        String datos[] = leerObjeto(tipo);
+        Object[] datos = leerObjetos(ruta);
 
-        String nuevos[] = new String[0];
+        int cont = 0;
 
-        int i = 0;
-
-        while (i < datos.length) {
-
-            if (!datos[i].contains(identificador)) {
-
-                String temp[] = new String[nuevos.length + 1];
-
-                int j = 0;
-
-                while (j < nuevos.length) {
-                    temp[j] = nuevos[j];
-                    j++;
-                }
-
-                temp[nuevos.length] = datos[i];
-
-                nuevos = temp;
+        for (int i = 0; i < datos.length; i++) {
+            if (!datos[i].toString().contains(identificador)) {
+                cont++;
             }
-
-            i++;
         }
 
-        try {
+        Object[] nuevos = new Object[cont];
 
-            FileWriter writer = new FileWriter(ruta);
+        int j = 0;
 
-            int k = 0;
-
-            while (k < nuevos.length) {
-
-                writer.write(nuevos[k] + "\n");
-                k++;
-
+        for (int i = 0; i < datos.length; i++) {
+            if (!datos[i].toString().contains(identificador)) {
+                nuevos[j] = datos[i];
+                j++;
             }
+        }
 
-            writer.close();
-
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ruta))) {
+            oos.writeObject(nuevos);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
+    
+    //Determina la ruta en la que se va a guardar el objeto
     private static String rutaObjeto(Object objeto) {
-
-        switch (objeto.getClass().getSimpleName()) {
-
-            case "Cliente":
-                return baseDireccion + "clientes.cli";
-
-            case "Empleado":
-                return baseDireccion + "empleados.emp";
-
-            case "Auto":
-            case "Moto":
-                return baseDireccion + "vehiculos.veh";
-
-            default:
-                return null;
-        }
+        return rutaTipoObjeto(objeto.getClass().getSimpleName());
     }
-
+    
+  //Guarda el objeto segun si es cliente, empleado, etc...
     private static String rutaTipoObjeto(String tipo) {
 
         switch (tipo.toLowerCase()) {
@@ -152,8 +112,12 @@ public class Utils {
             case "empleado":
                 return baseDireccion + "empleados.emp";
 
-            case "vehiculo":
+            case "auto":
+            case "moto":
                 return baseDireccion + "vehiculos.veh";
+
+            case "venta":
+                return baseDireccion + "ventas.vta";
 
             default:
                 return null;
