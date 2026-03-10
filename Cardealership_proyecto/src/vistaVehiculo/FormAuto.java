@@ -11,6 +11,7 @@ import modelo.vehiculo.excepciones.EObjectExiste;
 import modelo.vehiculo.excepciones.EObjectInvalido;
 import modelo.vehiculo.excepciones.EObjectNull;
 import modelo.vehiculo.excepciones.EObjectVoid;
+import utils.Utils;
 
 import java.awt.*;
 
@@ -195,6 +196,7 @@ public class FormAuto extends JPanel {
 			                placa, marca, modelo, año, precio, combustible,
 			                transmision, kilometraje, color, estado,
 			                cilindraje, true, carroceria, numeroPuertas);
+			        Utils.guardarObjeto(registrado);
 
 			        tablaL.addRow(new Object[] { registrado.getPlaca(), marca, modelo, año, precio });
 

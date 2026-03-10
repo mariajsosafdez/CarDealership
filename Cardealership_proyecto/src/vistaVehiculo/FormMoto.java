@@ -10,6 +10,7 @@ import modelo.vehiculo.excepciones.EObjectExiste;
 import modelo.vehiculo.excepciones.EObjectInvalido;
 import modelo.vehiculo.excepciones.EObjectNull;
 import modelo.vehiculo.excepciones.EObjectVoid;
+import utils.Utils;
 
 public class FormMoto extends JPanel {
 	private Concesionario concesionario;
@@ -177,6 +178,7 @@ public class FormMoto extends JPanel {
 			                placa, marca, modelo, año, precio, combustible,
 			                transmision, kilometraje, color, estado,
 			                cilindraje, true, categoria);
+			        Utils.guardarObjeto(registrada);
 
 			        tablaR.addRow(new Object[] { registrada.getPlaca(), marca, modelo, año, precio });
 

@@ -60,7 +60,7 @@ public class Concesionario {
 			throw new ValidacionException("El teléfono no puede estar vacío.");
 		if (email == null || email.trim().isEmpty())
 			throw new ValidacionException("El email no puede estar vacío.");
-		if (!email.contains("@"))
+		if (!email.contains("@") || !email.contains(".com"))
 			throw new ValidacionException("El email no tiene un formato válido.");
 
 		Cliente c = new Cliente(tipoDocumento, numeroDocumento, nombre, apellido, telefono, email);
@@ -197,6 +197,10 @@ public class Concesionario {
 	}
 
 	// CRUD VENTAS
+	public void agregarVenta(Venta venta) {
+	    ventas = Arrays.copyOf(ventas, ventas.length + 1);
+	    ventas[ventas.length - 1] = venta;
+	}
 
 	public Venta venderVehiculo(Vehiculo vehiculo, Cliente cliente, Vendedor vendedor) throws InvalidVentaException {
 

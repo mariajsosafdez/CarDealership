@@ -7,7 +7,7 @@ import modelo.persona.Cliente;
 import modelo.persona.Vendedor;
 import modelo.vehiculo.Vehiculo;
 
-public class Venta implements Serializable {
+public class Venta implements Serializable  {
 
     private String codigo;
     private Vehiculo[] vehiculos;

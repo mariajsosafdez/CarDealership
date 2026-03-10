@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 
 import modelo.*;
 import modelo.vehiculo.*;
+import utils.Utils;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -124,12 +126,12 @@ public class PanelVehiculo extends JPanel {
 			if (tablaCuerpoL.getSelectedRow() == -1 && tablaCuerpoR.getSelectedRow() == -1) {
 				JOptionPane.showMessageDialog(this, "Seleccione una fila a eliminar");
 			} else if (tablaCuerpoL.getSelectedRow() != -1 && tablaCuerpoR.getSelectedRow() == -1) {
-				eliminarVehiculo(tablaCuerpoL, tablaL);
+				eliminarVehiculo(tablaCuerpoL, tablaL, "auto");
 			} else if (tablaCuerpoR.getSelectedRow() != -1 && tablaCuerpoL.getSelectedRow() == -1) {
-				eliminarVehiculo(tablaCuerpoR, tablaR);
+				eliminarVehiculo(tablaCuerpoR, tablaR, "moto");
 			} else {
-				eliminarVehiculo(tablaCuerpoL, tablaL);
-				eliminarVehiculo(tablaCuerpoR, tablaR);
+				eliminarVehiculo(tablaCuerpoL, tablaL, "auto");
+				eliminarVehiculo(tablaCuerpoR, tablaR, "moto");
 			}
 
 			tablaCuerpoL.clearSelection();
@@ -154,13 +156,14 @@ public class PanelVehiculo extends JPanel {
 
 	}
 
-	public void eliminarVehiculo(JTable tablaCuerpo, DefaultTableModel tabla) {
+	public void eliminarVehiculo(JTable tablaCuerpo, DefaultTableModel tabla, String tipo) {
 		int filaEliminar = tablaCuerpo.getSelectedRow();
 		String placa = (String) tabla.getValueAt(filaEliminar, 0);
 		boolean estadoEliminar = concesionario.eliminarVehiculo((concesionario.buscarVehiculos(placa)).getPlaca());
 		// TODO ELIMINAR DEL FICHERO
 		if (estadoEliminar) {
 			tabla.removeRow(filaEliminar);
+			Utils.eliminarObjeto(tipo, placa);
 			JOptionPane.showMessageDialog(this, "Vehiculo eliminado correctamente");
 		} else {
 			JOptionPane.showMessageDialog(this, "Vehiculo no encontrado en el sistema");

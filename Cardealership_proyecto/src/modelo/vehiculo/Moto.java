@@ -1,11 +1,14 @@
 package modelo.vehiculo;
 
+import java.io.Serializable;
+
 import modelo.vehiculo.excepciones.*;
 import utils.Utils;
 
 
 
-public class Moto extends Vehiculo{
+public class Moto extends Vehiculo implements Serializable{
+	private static final long serialVersionUID = 2;
 	
 	private String categoria;
 
