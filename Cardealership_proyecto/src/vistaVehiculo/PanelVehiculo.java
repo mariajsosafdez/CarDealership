@@ -61,6 +61,19 @@ public class PanelVehiculo extends JPanel {
 		String[] tipoVehiculo = { "AUTO", "MOTO" };
 		JComboBox tipos = new JComboBox(tipoVehiculo);
 
+		// TABLA - columnas primero, antes de crear los formularios
+		tablaL.addColumn("Placa");
+		tablaL.addColumn("Marca");
+		tablaL.addColumn("Modelo");
+		tablaL.addColumn("Año");
+		tablaL.addColumn("Precio");
+
+		tablaR.addColumn("Placa");
+		tablaR.addColumn("Marca");
+		tablaR.addColumn("Modelo");
+		tablaR.addColumn("Año");
+		tablaR.addColumn("Precio");
+
 		CardLayout layoutCampos = new CardLayout();
 		JPanel panelCampos = new JPanel(layoutCampos);
 		panelCampos.add(new FormAuto(concesionario, tablaL), "AUTO");
@@ -86,20 +99,6 @@ public class PanelVehiculo extends JPanel {
 		Formulario.add(panelCampos);
 
 		add(Formulario, BorderLayout.SOUTH);
-
-		// TABLA
-
-		tablaL.addColumn("Placa");
-		tablaL.addColumn("Marca");
-		tablaL.addColumn("Modelo");
-		tablaL.addColumn("Año");
-		tablaL.addColumn("Precio");
-
-		tablaR.addColumn("Placa");
-		tablaR.addColumn("Marca");
-		tablaR.addColumn("Modelo");
-		tablaR.addColumn("Año");
-		tablaR.addColumn("Precio");
 
 		tablaCuerpoL = new JTable(tablaL);
 		tablaCuerpoR = new JTable(tablaR);

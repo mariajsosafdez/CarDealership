@@ -3,6 +3,8 @@ import java.io.*;
 import java.util.Arrays;
 
 import modelo.Concesionario;
+import modelo.persona.Cliente;
+import modelo.persona.Empleado;
 import modelo.vehiculo.excepciones.EObjectExiste;
 import modelo.vehiculo.excepciones.EObjectInvalido;
 import modelo.vehiculo.excepciones.EObjectNull;
@@ -82,9 +84,29 @@ public class Utils {
             if (datos[i] instanceof modelo.persona.Cliente) {
 
                 modelo.persona.Cliente c = (modelo.persona.Cliente) datos[i];
-
                 if (!identificador.equals(c.getId())) {
                     nuevos[j++] = c;
+                }
+
+            } else if (datos[i] instanceof modelo.persona.Empleado) {
+
+                modelo.persona.Empleado e = (modelo.persona.Empleado) datos[i];
+                if (!identificador.equals(e.getId())) {
+                    nuevos[j++] = e;
+                }
+
+            } else if (datos[i] instanceof modelo.vehiculo.Vehiculo) {
+
+                modelo.vehiculo.Vehiculo v = (modelo.vehiculo.Vehiculo) datos[i];
+                if (!identificador.equalsIgnoreCase(v.getPlaca())) {
+                    nuevos[j++] = v;
+                }
+
+            } else if (datos[i] instanceof modelo.venta.Venta) {
+
+                modelo.venta.Venta vt = (modelo.venta.Venta) datos[i];
+                if (!identificador.equalsIgnoreCase(vt.getCodigo())) {
+                    nuevos[j++] = vt;
                 }
 
             } else {
@@ -130,7 +152,39 @@ public class Utils {
         }
     }
     
+    public static void reescribirVehiculos(modelo.vehiculo.Vehiculo[] vehiculos) {
+		String ruta = baseDireccion + "vehiculos.veh";
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ruta))) {
+			oos.writeObject(vehiculos);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void reescribirEmpleados(modelo.persona.Empleado[] empleados) {
+		String ruta = baseDireccion + "empleados.emp";
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ruta))) {
+			oos.writeObject(empleados);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
     
+	public static boolean existeDocumento(String numeroDocumento, Cliente[] clientes, Empleado[] empleados) {
+
+		int i = 0;
+		while (i < clientes.length) {
+			if (clientes[i].getId().equals(numeroDocumento)) return true;
+			i++;
+		}
+		int j = 0;
+		while (j < empleados.length) {
+			if (empleados[j].getId().equals(numeroDocumento)) return true;
+			j++;
+		}
+		return false;
+	}
+	
     public static void validarDatosGenerales(String marca, String modelo, int year, float precio, float kilometraje,
 			float cilindraje) throws EObjectNull, EObjectInvalido {
 		if (marca == null || marca.trim().isEmpty())

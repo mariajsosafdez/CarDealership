@@ -17,12 +17,14 @@ import java.awt.*;
 
 public class FormAuto extends JPanel {
 	private Concesionario concesionario;
-	private DefaultTableModel tablaL = new DefaultTableModel() {
-		@Override
-		public boolean isCellEditable(int row, int column) {
-			return false;
-		}
-	};
+	private DefaultTableModel tablaL = new DefaultTableModel(
+		    new Object[]{"Placa","Marca","Modelo","Año","Precio"}, 0
+		) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
 	private JTextField txtPlaca;
 	private JTextField txtMarca;
 	private JTextField txtModelo;
@@ -45,7 +47,7 @@ public class FormAuto extends JPanel {
 
 	public FormAuto(Concesionario concesionario, DefaultTableModel tablaL) {
 		this.concesionario = concesionario;
-		
+		this.tablaL = tablaL;
 		setLayout(new BorderLayout(0, 0));
 
 		JPanel fila2 = new JPanel();
@@ -196,7 +198,6 @@ public class FormAuto extends JPanel {
 			                placa, marca, modelo, año, precio, combustible,
 			                transmision, kilometraje, color, estado,
 			                cilindraje, true, carroceria, numeroPuertas);
-			        Utils.guardarObjeto(registrado);
 
 			        tablaL.addRow(new Object[] { registrado.getPlaca(), marca, modelo, año, precio });
 
@@ -229,5 +230,6 @@ public class FormAuto extends JPanel {
 			}
 		});
 
+		cargarAutos();
 	}
 }

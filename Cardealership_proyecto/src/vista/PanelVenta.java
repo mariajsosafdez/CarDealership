@@ -64,13 +64,15 @@ public class PanelVenta extends JPanel {
 		}
 	}
 
-	// Actualizar vehiculos registrados
+	// Actualizar vehiculos registrados (solo disponibles)
 	public void actualizarVehiculos() {
 
 		cbVehiculos.removeAllItems();
 
 		for (Vehiculo v : concesionario.listarVehiculos()) {
-			cbVehiculos.addItem(v.getPlaca() + " " + v.getMarca() + " " + v.getModelo());
+			if (v.isDisponible()) {
+				cbVehiculos.addItem(v.getPlaca() + " " + v.getMarca() + " " + v.getModelo());
+			}
 		}
 	}
 
@@ -183,33 +185,54 @@ public class PanelVenta extends JPanel {
 		        return;
 		    }
 
-		    String tipoVehiculo = (String) cbVehiculos.getSelectedItem();
+		    // Construir combo solo con vehiculos disponibles
+		    JComboBox<String> cbDisponibles = new JComboBox<>();
+		    for (Vehiculo v : concesionario.listarVehiculos()) {
+		        if (v.isDisponible()) {
+		            cbDisponibles.addItem(v.getPlaca() + " | " + v.getMarca() + " " + v.getModelo() + " | $" + v.getPrecio());
+		        }
+		    }
 
-		    if (tipoVehiculo == null) {
-		        JOptionPane.showMessageDialog(this, "Seleccione un vehículo");
+		    if (cbDisponibles.getItemCount() == 0) {
+		        JOptionPane.showMessageDialog(this, "No hay vehículos disponibles.");
 		        return;
 		    }
 
-		    String placa = tipoVehiculo.split(" ")[0];
+		    JPanel panelDialogo = new JPanel(new BorderLayout(5, 5));
+		    panelDialogo.add(new JLabel("Seleccione el vehículo a agregar:"), BorderLayout.NORTH);
+		    panelDialogo.add(cbDisponibles, BorderLayout.CENTER);
 
+		    int resultado = JOptionPane.showConfirmDialog(this, panelDialogo,
+		            "Agregar vehículo a venta " + ventaActual.getCodigo(),
+		            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+		    if (resultado != JOptionPane.OK_OPTION) return;
+
+		    String seleccion = (String) cbDisponibles.getSelectedItem();
+		    if (seleccion == null) return;
+
+		    String placa = seleccion.split(" \\| ")[0].trim();
 		    Vehiculo v = concesionario.buscarVehiculos(placa);
 
 		    try {
+		        ventaActual.agregarVehiculo(v); // pone disponible=false en memoria
 
-		        ventaActual.agregarVehiculo(v);
+		        // Persistir vehiculos y empleados actualizados
+		        Utils.reescribirVehiculos(concesionario.listarVehiculos());
+		        Utils.reescribirEmpleados(concesionario.listarEmpleados());
 
-		        JOptionPane.showMessageDialog(this,
-		                "Vehículo agregado a la venta\nTotal actual: $" + ventaActual.getTotal());
-
-		        // actualizar tabla
+		        // Actualizar total en la fila de la tabla
 		        int fila = tablaCuerpo.getRowCount() - 1;
-
 		        tabla.setValueAt(ventaActual.getTotal(), fila, 4);
 
-		    } catch (InvalidVentaException ex) {
+		        // Actualizar combo principal de vehiculos
+		        actualizarVehiculos();
 
+		        JOptionPane.showMessageDialog(this,
+		                "Vehículo " + placa + " agregado.\nTotal actual: $" + ventaActual.getTotal());
+
+		    } catch (Exception ex) {
 		        JOptionPane.showMessageDialog(this, ex.getMessage());
-
 		    }
 		});
 
@@ -234,10 +257,12 @@ public class PanelVenta extends JPanel {
 		                    (Vendedor) concesionario.buscarEmpleado(vendedorDoc)
 		            );
 
-		            Utils.guardarObjeto(ventaActual);
 		            ventaActual.getVendedor().registrarVenta(ventaActual);
 
+		            Utils.reescribirEmpleados(concesionario.listarEmpleados());
+
 		            panelEmpleado.actualizarTabla();
+		            actualizarVehiculos(); // quitar el vehiculo vendido del combo
 
 		            tabla.addRow(new Object[]{
 		                    ventaActual.getCodigo(),
@@ -255,7 +280,7 @@ public class PanelVenta extends JPanel {
 		        JOptionPane.showMessageDialog(this, "Complete todos los campos correctamente");
 		    }
 		});
-
+		cargarVentas();
 	}
 
 }

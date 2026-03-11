@@ -11,6 +11,7 @@ import utils.Utils;
 public class PanelEmpleado extends JPanel {
 	private Concesionario concesionario;
 
+	// cree esto
 	private JTable tablaCuerpo;
 	private DefaultTableModel tabla = new DefaultTableModel() {
 		@Override
@@ -52,24 +53,19 @@ public class PanelEmpleado extends JPanel {
 			}
 		}
 	}
-	//recargar vendedores
+
+	// recargar vendedores
 	public void actualizarTabla() {
 
-	    tabla.setRowCount(0); // limpia la tabla
+		tabla.setRowCount(0); // limpia la tabla
 
-	    for (Empleado e : concesionario.listarEmpleados()) {
+		for (Empleado e : concesionario.listarEmpleados()) {
 
-	        tabla.addRow(new Object[]{
-	        	e.getTipoDocumento(),
-	            e.getId(),
-	            e.getNombre(),
-	            e.getApellido(),
-	            e.getTelefono(),
-	            e.getSalario(),
-	            e instanceof Vendedor ? ((Vendedor) e).getVehiculosVendidos() : "NA"
-	        });
+			tabla.addRow(
+					new Object[] { e.getTipoDocumento(), e.getId(), e.getNombre(), e.getApellido(), e.getTelefono(),
+							e.getSalario(), e instanceof Vendedor ? ((Vendedor) e).getVehiculosVendidos() : "NA" });
 
-	    }
+		}
 	}
 
 	public PanelEmpleado(Concesionario concesionario) {
@@ -193,7 +189,6 @@ public class PanelEmpleado extends JPanel {
 						concesionario.registrarVendedor(tipoDoc, documento, nombre, apellido, telefono, salario);
 						Empleado v = concesionario.buscarEmpleado(documento);
 						tabla.addRow(new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, 0, v });
-						Utils.guardarObjeto(v);
 					} catch (ValidacionException ex) {
 						JOptionPane.showMessageDialog(this, ex.getMessage());
 					}
@@ -205,7 +200,6 @@ public class PanelEmpleado extends JPanel {
 						Empleado em = concesionario.buscarEmpleado(documento);
 						tabla.addRow(
 								new Object[] { tipoDoc, documento, nombre, apellido, telefono, salario, "NA", em });
-						Utils.guardarObjeto(em);
 					} catch (ValidacionException ex) {
 						JOptionPane.showMessageDialog(this, ex.getMessage());
 					}
@@ -225,5 +219,6 @@ public class PanelEmpleado extends JPanel {
 			}
 		});
 
+		cargarEmpleados();
 	}
 }

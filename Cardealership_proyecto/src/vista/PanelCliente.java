@@ -94,15 +94,8 @@ public class PanelCliente extends JPanel {
 		Formulario.add(fila1);
 		Formulario.add(fila2);
 		Formulario.add(fila3);
-
-		// TABLA
-
-		/*tabla.addColumn("Tipo Documento");
-		tabla.addColumn("Documento");
-		tabla.addColumn("Nombre");
-		tabla.addColumn("Apellido");
-		tabla.addColumn("Teléfono");
-		tabla.addColumn("Email");*/
+		
+		//Tabla
 
 		tablaCuerpo = new JTable(tabla);
 		JScrollPane scroll = new JScrollPane(tablaCuerpo);

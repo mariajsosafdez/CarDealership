@@ -50,6 +50,8 @@ public class Concesionario {
 			throw new ValidacionException("El tipo de documento no puede estar vacío.");
 		if (numeroDocumento == null || numeroDocumento.trim().isEmpty())
 			throw new ValidacionException("El número de documento no puede estar vacío.");
+		if (Utils.existeDocumento(numeroDocumento, clientes, empleados))
+			throw new ValidacionException("Ya existe una persona registrada con ese número de documento.");
 		if (buscarCliente(numeroDocumento) != null)
 			throw new ValidacionException("Ya existe un cliente con ese número de documento.");
 		if (nombre == null || nombre.trim().isEmpty())
@@ -70,7 +72,6 @@ public class Concesionario {
 		Utils.guardarObjeto(c); // solo concesionario
 	}
 	
-	//añadí esto
 	public void agregarCliente(Cliente c) {
 	    clientes = Arrays.copyOf(clientes, clientes.length + 1);
 	    clientes[clientes.length - 1] = c;
@@ -125,8 +126,8 @@ public class Concesionario {
 			throw new ValidacionException("El tipo de documento no puede estar vacío.");
 		if (numeroDocumento == null || numeroDocumento.trim().isEmpty())
 			throw new ValidacionException("El número de documento no puede estar vacío.");
-		if (buscarEmpleado(numeroDocumento) != null)
-			throw new ValidacionException("Ya existe un empleado con ese número de documento.");
+		if (Utils.existeDocumento(numeroDocumento, clientes, empleados))
+			throw new ValidacionException("Ya existe una persona registrada con ese número de documento.");
 		if (nombre == null || nombre.trim().isEmpty())
 			throw new ValidacionException("El nombre no puede estar vacío.");
 		if (apellido == null || apellido.trim().isEmpty())
@@ -149,8 +150,8 @@ public class Concesionario {
 			throw new ValidacionException("El tipo de documento no puede estar vacío.");
 		if (numeroDocumento == null || numeroDocumento.trim().isEmpty())
 			throw new ValidacionException("El número de documento no puede estar vacío.");
-		if (buscarEmpleado(numeroDocumento) != null)
-			throw new ValidacionException("Ya existe un empleado/vendedor con ese número de documento.");
+		if (Utils.existeDocumento(numeroDocumento, clientes, empleados))
+			throw new ValidacionException("Ya existe una persona registrada con ese número de documento."); 
 		if (nombre == null || nombre.trim().isEmpty())
 			throw new ValidacionException("El nombre no puede estar vacío.");
 		if (apellido == null || apellido.trim().isEmpty())
@@ -164,6 +165,11 @@ public class Concesionario {
 		empleados = Arrays.copyOf(empleados, empleados.length + 1);
 		empleados[empleados.length - 1] = v;
 		Utils.guardarObjeto(v);
+	}
+	
+	public void agregarEmpleado(Empleado e) {
+	    empleados = Arrays.copyOf(empleados, empleados.length + 1);
+	    empleados[empleados.length - 1] = e;
 	}
 
 	public Empleado buscarEmpleado(String numeroDocumento) {
@@ -236,6 +242,8 @@ public class Concesionario {
 		ventas = Arrays.copyOf(ventas, ventas.length + 1);
 		ventas[ventas.length - 1] = venta;
 		Utils.guardarObjeto(venta);
+		Utils.reescribirVehiculos(vehiculos); //actualiza el estado del vehiculo en el fichero
+		Utils.reescribirEmpleados(empleados); //reescribir fichero para vehiculos vendidos ++
 		return venta;
 	}
 
@@ -337,6 +345,11 @@ public class Concesionario {
 		this.vehiculos[this.vehiculos.length - 1] = nuevaMoto;
 		Utils.guardarObjeto(nuevaMoto);
 		return nuevaMoto;
+	}
+	
+	public void agregarVehiculo(Vehiculo v) {
+	    vehiculos = Arrays.copyOf(vehiculos, vehiculos.length + 1);
+	    vehiculos[vehiculos.length - 1] = v;
 	}
 
 	public Vehiculo buscarVehiculos(String placa) {
