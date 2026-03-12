@@ -35,7 +35,7 @@ public class FormMoto extends JPanel {
 		public void cargarAutos() {
 			for (Vehiculo a : concesionario.listarVehiculos()) {
 				if (a instanceof Moto) {
-					tablaR.addRow(new Object[] { a.getPlaca(), a.getMarca(), a.getModelo(), a.getYear(), a.getPrecio() });
+					tablaR.addRow(new Object[] { a.getPlaca(), a.getMarca(), a.getModelo(), a.getYear(),String.format("%.0f", a.getPrecio()) });
 				}
 
 			}
@@ -51,9 +51,8 @@ public class FormMoto extends JPanel {
 
 		JButton btnRegistrar = new JButton("Registrar");
 		fila2.add(btnRegistrar);
-		String[] combustibles = { " ","GASOLINA CORRIENTE", "GASOLINA EXTRA", "DIESEL", "ELECTRICO", "GAS NATURAL" };
-		String[] transmisiones = { " ","MANUAL", "AUTOMATICA", "CVT", "DOBLE EMBRAGUE", "MANUAL AUTOMATIZADA", "SECUENCIAL",
-				"ELECTRONICA VARIABLE" };
+		String[] combustibles = { " ","GASOLINA CORRIENTE", "GASOLINA EXTRA","ELECTRICO"};
+		String[] transmisiones = { " ","MANUAL", "AUTOMATICA" };
 		String[] estados = { " ","Nuevo", "Usado" };
 		String[] categorias = {" ", "SCOOTER","SPORT","NAKED","ENDURO","TOURING","CRUISER","CROSS"};
 
@@ -142,38 +141,26 @@ public class FormMoto extends JPanel {
 				año = Integer.parseInt(txtAño.getText());
 
 			} catch (NumberFormatException ex) {
-
-				JOptionPane.showMessageDialog(this, ex.getMessage());
-
 			}
 			try {
 
 				precio = Float.parseFloat(txtPrecio.getText());
 
 			} catch (NumberFormatException ex) {
-
-				JOptionPane.showMessageDialog(this, ex.getMessage());
 			}
 			try {
 
 				kilometraje = Float.parseFloat(txtKilometraje.getText());
 
 			} catch (NumberFormatException ex) {
-
-				JOptionPane.showMessageDialog(this, ex.getMessage());
 			}
 			try {
 
 				cilindraje = Float.parseFloat(txtCilindraje.getText());
 
 			} catch (NumberFormatException ex) {
-
-				JOptionPane.showMessageDialog(this, ex.getMessage());
 			}
 
-			if (!marca.isBlank() && !modelo.isBlank() && año >= 1885 && precio >= 0 && !combustible.isBlank()
-			        && !transmision.isBlank() && kilometraje >= 0 && !color.isBlank() && !estado.isBlank()
-			        && cilindraje >= 0 && !categoria.isBlank()) {
 
 			    try {
 			        Moto registrada = concesionario.registrarMoto(
@@ -181,7 +168,7 @@ public class FormMoto extends JPanel {
 			                transmision, kilometraje, color, estado,
 			                cilindraje, true, categoria);
 
-			        tablaR.addRow(new Object[] { registrada.getPlaca(), marca, modelo, año, precio });
+			        tablaR.addRow(new Object[] { registrada.getPlaca(), marca, modelo, año, String.format("%.0f", precio) });
 
 			        txtPlaca.setText("");
 			        txtMarca.setText("");
@@ -205,9 +192,6 @@ public class FormMoto extends JPanel {
 			    } catch (EObjectVoid ex) {
 			        JOptionPane.showMessageDialog(this, "Dato vacío: " + ex.getMessage());
 			    }
-			} else {
-			    JOptionPane.showMessageDialog(this, "Complete todos los campos");
-			}
 		});
 
 		cargarAutos();

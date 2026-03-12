@@ -286,6 +286,11 @@ public class Concesionario {
 			i++;
 		}
 		ventas = nuevo;
+		Venta v = buscarVenta(codigo);
+		for(Vehiculo vh : v.listarVehiculo()) {
+			vh.setDisponible(true);
+		}
+		v.getVendedor().eliminarVenta(v);
 		return true;
 	}
 

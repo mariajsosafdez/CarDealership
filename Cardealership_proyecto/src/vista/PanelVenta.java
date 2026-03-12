@@ -51,7 +51,7 @@ public class PanelVenta extends JPanel {
 	private final JButton btnEliminar = new JButton("Eliminar");
 	private final JButton btnDetalle = new JButton("Detalle");
 	private final JButton btnAgregar = new JButton("Agregar \nVehiculo");
-	private Venta ventaActual = null;
+	private Venta venta = null;
 	private JLabel lblMetodoPago = new JLabel("Método de pago:");
 	private JComboBox<String> cbMetodoPago =
 	        new JComboBox<>(new String[]{"Efectivo","Tarjeta","Transferencia","Financiado"});
@@ -60,7 +60,7 @@ public class PanelVenta extends JPanel {
 	public void cargarVentas() {
 		for (Venta v : concesionario.listarVentas()) {
 			tabla.addRow(new Object[] { v.getCodigo(), v.getFecha(), v.getCliente().getId(), v.getVendedor().getId(),
-					v.getTotal() });
+					String.format("%.0f", v.getTotal()) });
 		}
 	}
 
@@ -144,11 +144,11 @@ public class PanelVenta extends JPanel {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
 				String codigo = (String) tabla.getValueAt(filaEliminar, 0);
 				boolean estadoEliminar = concesionario.eliminarVenta(codigo);
-				// TODO ELIMINAR DEL FICHERO
 				if (estadoEliminar) {
 					tabla.removeRow(filaEliminar);
 					Utils.eliminarObjeto("venta", codigo);
 					JOptionPane.showMessageDialog(this, "Venta eliminada correctamente");
+					 actualizarVehiculos();
 				} else {
 					JOptionPane.showMessageDialog(this, "Venta no encontrada en el sistema");
 				}
@@ -179,12 +179,13 @@ public class PanelVenta extends JPanel {
 		});
 		//Añadir vehiculo
 		btnAgregar.addActionListener(e -> {
-
-		    if (ventaActual == null) {
-		        JOptionPane.showMessageDialog(this, "Primero debe registrar una venta.");
+			
+		    if (tablaCuerpo.getSelectedRow() == -1) {
+		        JOptionPane.showMessageDialog(this, "Seleccione una venta.");
 		        return;
 		    }
-
+		    int fila = tablaCuerpo.getSelectedRow();
+		    String codigo = (String) tabla.getValueAt(fila, 0);
 		    // Construir combo solo con vehiculos disponibles
 		    JComboBox<String> cbDisponibles = new JComboBox<>();
 		    for (Vehiculo v : concesionario.listarVehiculos()) {
@@ -203,7 +204,7 @@ public class PanelVenta extends JPanel {
 		    panelDialogo.add(cbDisponibles, BorderLayout.CENTER);
 
 		    int resultado = JOptionPane.showConfirmDialog(this, panelDialogo,
-		            "Agregar vehículo a venta " + ventaActual.getCodigo(),
+		            "Agregar vehículo a venta " + codigo,
 		            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
 		    if (resultado != JOptionPane.OK_OPTION) return;
@@ -213,23 +214,24 @@ public class PanelVenta extends JPanel {
 
 		    String placa = seleccion.split(" \\| ")[0].trim();
 		    Vehiculo v = concesionario.buscarVehiculos(placa);
+		    
+		    Venta venta = concesionario.buscarVenta(codigo);
 
 		    try {
-		        ventaActual.agregarVehiculo(v); // pone disponible=false en memoria
+		        venta.agregarVehiculo(v); // pone disponible=false en memoria
 
 		        // Persistir vehiculos y empleados actualizados
 		        Utils.reescribirVehiculos(concesionario.listarVehiculos());
 		        Utils.reescribirEmpleados(concesionario.listarEmpleados());
 
 		        // Actualizar total en la fila de la tabla
-		        int fila = tablaCuerpo.getRowCount() - 1;
-		        tabla.setValueAt(ventaActual.getTotal(), fila, 4);
+		        tabla.setValueAt(venta.getTotal(), fila, 4);
 
 		        // Actualizar combo principal de vehiculos
 		        actualizarVehiculos();
 
 		        JOptionPane.showMessageDialog(this,
-		                "Vehículo " + placa + " agregado.\nTotal actual: $" + ventaActual.getTotal());
+		                "Vehículo " + placa + " agregado.\nTotal actual: $" + venta.getTotal());
 
 		    } catch (Exception ex) {
 		        JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -251,13 +253,13 @@ public class PanelVenta extends JPanel {
 
 		        try {
 
-		            ventaActual = concesionario.venderVehiculo(
+		            venta = concesionario.venderVehiculo(
 		                    concesionario.buscarVehiculos(placa),
 		                    concesionario.buscarCliente(clienteDoc),
 		                    (Vendedor) concesionario.buscarEmpleado(vendedorDoc)
 		            );
 
-		            ventaActual.getVendedor().registrarVenta(ventaActual);
+		            venta.getVendedor().registrarVenta(venta);
 
 		            Utils.reescribirEmpleados(concesionario.listarEmpleados());
 
@@ -265,11 +267,12 @@ public class PanelVenta extends JPanel {
 		            actualizarVehiculos(); // quitar el vehiculo vendido del combo
 
 		            tabla.addRow(new Object[]{
-		                    ventaActual.getCodigo(),
-		                    ventaActual.getFecha(),
-		                    ventaActual.getCliente().getId(),
-		                    ventaActual.getVendedor().getId(),
-		                    ventaActual.getTotal(),
+		                    venta.getCodigo(),
+		                    venta.getFecha(),
+		                    venta.getCliente().getId(),
+		                    venta.getVendedor().getId(),
+		                    String.format("%.0f",
+		                    venta.getTotal()),
 		                    metodoPago
 		            });
 		        } catch (Exception ex) {

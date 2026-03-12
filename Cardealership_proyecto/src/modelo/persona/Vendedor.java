@@ -32,7 +32,10 @@ public class Vendedor extends Empleado implements Serializable {
         }
         this.vehiculosVendidos++;
     }
-
+    
+    public void eliminarVenta(Venta venta){
+         this.vehiculosVendidos--;
+    }
     @Override
     public String toString() {
         return "Vendedor{" +
@@ -41,7 +44,7 @@ public class Vendedor extends Empleado implements Serializable {
                 ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", telefono='" + telefono + '\'' +
-                ", salario=" + getSalario() +
+                ", salario=" + String.format("%.0f", getSalario())+
                 ", vehiculosVendidos=" + vehiculosVendidos +
                 '}';
     }

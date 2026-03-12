@@ -192,8 +192,8 @@ public class Utils {
 		if (modelo == null || modelo.trim().isEmpty())
 			throw new EObjectNull("El modelo es obligatorio.");
 
-		if (year < 2014 || year > 2027)
-			throw new EObjectInvalido("Año fuera de rango (2014-2027).");
+		if (year < 1950 || year > 2027)
+			throw new EObjectInvalido("Año fuera de rango (1950-2027).");
 
 		if (precio <= 0)
 			throw new EObjectInvalido("El precio debe ser un valor positivo.");

@@ -155,7 +155,7 @@ public class Venta implements Serializable  {
             listaVehiculos += "   - " + v.getPlaca() + " | "
                             + v.getMarca() + " "
                             + v.getModelo() + " | $"
-                            + v.getPrecio() + "\n";
+                            + String.format("%.0f", v.getPrecio()) + "\n";
         }
 
         return "\n=========== VENTA " + codigo + " ===========\n"
@@ -168,7 +168,7 @@ public class Venta implements Serializable  {
              + " (" + vendedor.getId() + ")\n"
              + "\nVehículos vendidos:\n"
              + listaVehiculos
-             + "\nTOTAL: $" + total
+             + "\nTOTAL: $" + String.format("%.0f", total)
              + "\n=================================\n";
     }
 }

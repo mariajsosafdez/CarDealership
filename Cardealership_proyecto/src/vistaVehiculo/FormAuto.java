@@ -39,7 +39,7 @@ public class FormAuto extends JPanel {
 	public void cargarAutos() {
 		for (Vehiculo a : concesionario.listarVehiculos()) {
 			if (a instanceof Auto) {
-				tablaL.addRow(new Object[] { a.getPlaca(), a.getMarca(), a.getModelo(), a.getYear(), a.getPrecio() });
+				tablaL.addRow(new Object[] { a.getPlaca(), a.getMarca(), a.getModelo(), a.getYear(), String.format("%.0f", a.getPrecio()) });
 			}
 
 		}
@@ -153,25 +153,18 @@ public class FormAuto extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, ex.getMessage());
-
 			}
 			try {
 
 				precio = Float.parseFloat(txtPrecio.getText());
 
 			} catch (NumberFormatException ex) {
-
-				JOptionPane.showMessageDialog(this, ex.getMessage());
-
 			}
 			try {
 
 				kilometraje = Float.parseFloat(txtKilometraje.getText());
 
 			} catch (NumberFormatException ex) {
-
-				JOptionPane.showMessageDialog(this, ex.getMessage());
 
 			}
 			try {
@@ -180,18 +173,11 @@ public class FormAuto extends JPanel {
 
 			} catch (NumberFormatException ex) {
 
-				JOptionPane.showMessageDialog(this, ex.getMessage());
-
 			}
 			try {
 				numeroPuertas = Integer.parseInt(txtNumeroPuertas.getText());
 			} catch (NumberFormatException ex) {
-				JOptionPane.showMessageDialog(this, ex.getMessage());
 			}
-
-			if (!marca.isBlank() && !modelo.isBlank() && año >= 1885 && precio >= 0 && !combustible.isBlank()
-			        && !transmision.isBlank() && kilometraje >= 0 && !color.isBlank() && !estado.isBlank()
-			        && cilindraje >= 0 && numeroPuertas > 0 && !carroceria.isBlank()) {
 
 			    try {
 			        Auto registrado = concesionario.registrarAuto(
@@ -199,7 +185,7 @@ public class FormAuto extends JPanel {
 			                transmision, kilometraje, color, estado,
 			                cilindraje, true, carroceria, numeroPuertas);
 
-			        tablaL.addRow(new Object[] { registrado.getPlaca(), marca, modelo, año, precio });
+			        tablaL.addRow(new Object[] { registrado.getPlaca(), marca, modelo, año, String.format("%.0f", precio) });
 
 			        txtPlaca.setText("");
 			        txtMarca.setText("");
@@ -225,9 +211,6 @@ public class FormAuto extends JPanel {
 			        JOptionPane.showMessageDialog(this, "Dato vacío: " + ex.getMessage());
 			    }
 
-			} else {
-			    JOptionPane.showMessageDialog(this, "Complete todos los campos");
-			}
 		});
 
 		cargarAutos();
