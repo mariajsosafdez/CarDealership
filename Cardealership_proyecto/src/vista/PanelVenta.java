@@ -143,7 +143,8 @@ public class PanelVenta extends JPanel {
 			if (tablaCuerpo.getSelectedRow() != -1) {
 				int filaEliminar = tablaCuerpo.getSelectedRow();
 				String codigo = (String) tabla.getValueAt(filaEliminar, 0);
-				boolean estadoEliminar = concesionario.eliminarVenta(codigo);
+				Venta v = concesionario.buscarVenta(codigo);
+				boolean estadoEliminar = concesionario.eliminarVenta(v.getCodigo());
 				if (estadoEliminar) {
 					tabla.removeRow(filaEliminar);
 					Utils.eliminarObjeto("venta", codigo);

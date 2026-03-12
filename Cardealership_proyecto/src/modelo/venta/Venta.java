@@ -37,7 +37,7 @@ public class Venta implements Serializable  {
     }
 
     public Vehiculo[] listarVehiculo() {
-        return Arrays.copyOf(vehiculos, vehiculos.length);
+        return vehiculos;
     }
 
     public Cliente getCliente() {
